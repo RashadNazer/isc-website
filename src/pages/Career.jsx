@@ -49,6 +49,7 @@ const specificPositions = [
 ];
 
 export default function Career() {
+  console.log("Career component is rendering");
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Header */}
@@ -117,10 +118,7 @@ export default function Career() {
         </div>
       </section>
 
-      {/* Footer Disclaimer */}
-      <footer className="py-12 text-center text-slate-400 text-sm">
-        <p>© 2026 International Security & Communications Co. - All rights reserved.</p>
-      </footer>
+      <h1 className="pt-32 text-center text-3xl">Career Page Loaded</h1>
     </div>
   );
 }

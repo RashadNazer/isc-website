@@ -1,21 +1,24 @@
-// src/App.jsx
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Layout & Components
 import Layout from './components/Layout';
+import ScrollToTop from './components/ScrollToTop';
+
+// Pages
 import Home from './pages/Home';
 import Career from './pages/Career';
 import Contact from './pages/Contact';
 import Projects from './pages/Projects';
 import PartnersPage from './pages/Products';
-import ScrollToTop from './components/ScrollToTop';
 import CustomersPage from './pages/Customers';
-// Import other pages as you create them:
-// import About from './pages/About'; 
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Layout>
+      {/* If Layout is causing the blank screen, try removing <Layout> temporarily */}
+      <Layout> 
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/career" element={<Career />} />
@@ -23,9 +26,9 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/products" element={<PartnersPage />} />
           <Route path="/customers" element={<CustomersPage />} />
-          {/* Add more routes here as you build the pages */}
-          <Route path="/about" element={<div className="py-20 text-center">About Us Page</div>} />
-          <Route path="/services" element={<div className="py-20 text-center">Services Page</div>} />
+          
+          {/* Fallback for undefined routes */}
+          <Route path="*" element={<div className="py-40 text-center">404 - Page Not Found</div>} />
         </Routes>
       </Layout>
     </Router>

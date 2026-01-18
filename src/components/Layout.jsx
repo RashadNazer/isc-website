@@ -11,12 +11,20 @@ export default function Layout({ children }) {
 
   // Track scroll position to trigger shrink effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleScroll = () => {
+    const currentScroll = window.scrollY;
+    // Shrink at 120px, but only grow back when scrolled above 20px
+    // This gap prevents the "back and forth" flickering
+    if (currentScroll > 120) {
+      setIsScrolled(true);
+    } else if (currentScroll < 20) {
+      setIsScrolled(false);
+    }
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
 
   const handleScrollLink = (e, id) => {
     if (pathname === '/') {
@@ -42,25 +50,9 @@ export default function Layout({ children }) {
     { name: 'Career', path: '/career', type: 'link' },
   ];
 
-  // 1. Updated Scroll Logic with Hysteresis
-useEffect(() => {
-  const handleScroll = () => {
-    const currentScroll = window.scrollY;
-    // Shrink at 120px, but only grow back when scrolled above 20px
-    // This gap prevents the "back and forth" flickering
-    if (currentScroll > 120) {
-      setIsScrolled(true);
-    } else if (currentScroll < 20) {
-      setIsScrolled(false);
-    }
-  };
-  
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
+  // ... (imports and scroll effect logic remain the same)
 
-// 2. Updated Render
-return (
+  return (
   <div className="min-h-screen bg-white font-sans flex flex-col">
     {/* OUTER WRAPPER: Fixed height to reserve space in the layout */}
     <div className="h-52 md:h-52 w-full bg-white border-b border-slate-50 relative z-50">

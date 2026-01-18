@@ -738,7 +738,7 @@ export default function Home() {
                 href="/products" 
                 className="group flex items-center gap-3 text-blue-700 font-bold text-lg hover:text-blue-900 transition-all border-b-2 border-transparent hover:border-blue-900 pb-2"
               >
-                View All Products
+                View all products
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-900 group-hover:text-white transition-all">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />

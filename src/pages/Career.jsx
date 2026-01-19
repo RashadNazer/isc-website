@@ -125,10 +125,7 @@ export default function Career() {
         </div>
       </section>
 
-      {/* Bottom Status */}
-      <div className="py-12 bg-white dark:bg-slate-950 text-center border-t dark:border-slate-900 transition-colors">
-        <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-xs">Career Portal Active</p>
-      </div>
+      
     </div>
   );
 }

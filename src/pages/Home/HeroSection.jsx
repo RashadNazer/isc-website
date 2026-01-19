@@ -75,7 +75,22 @@ const HeroSection = () => {
                     Our Solutions
                   </button>
                 </MagneticButton>
-
+                <MagneticButton>
+                  <button
+                    onClick={(e) => scrollToSection(e, "projects")}
+                    className="w-full sm:w-auto px-10 py-5 bg-white text-blue-950 font-black rounded-2xl shadow-2xl hover:bg-blue-50 transition-all text-xs uppercase tracking-widest"
+                  >
+                    Our Projects
+                  </button>
+                </MagneticButton>
+                <MagneticButton>
+                  <button
+                    onClick={(e) => scrollToSection(e, "request-quote-cta")}
+                    className="w-full sm:w-auto px-10 py-5 bg-blue-600/20 backdrop-blur-md border border-white/30 text-white font-black rounded-2xl hover:bg-blue-600/40 transition-all text-xs uppercase tracking-widest"
+                  >
+                    Request a Quote
+                  </button>
+                </MagneticButton>
                 <MagneticButton>
                   <button
                     onClick={() => navigate("/contact")}

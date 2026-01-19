@@ -8,12 +8,14 @@ import SupportSection from "./Home/SupportSection";
 import CustomersSection from "./Home/CustomersSection";
 import ProjectsSection from "./Home/ProjectsSection";
 import ProductsSection from "./Home/ProductsSection";
+import RequestQuoteCTA from "./Home/RequestQuoteCTA";
+
 
 const Home = () => {
   return (
     <div className="bg-white dark:bg-slate-950">
       {/* 1. HERO: Leading into About with an angle */}
-      <div className="relative">
+      <div className="relative" id="home">
         <HeroSection />
         <SectionDivider colorClass="fill-slate-50 dark:fill-slate-900" />
       </div>
@@ -27,7 +29,7 @@ const Home = () => {
       <ServicesSection />
 
       {/* 4. SOLUTIONS: Add depth with Mesh */}
-      <MeshBackground className="bg-slate-50 dark:bg-slate-900/50">
+      <MeshBackground className="bg-slate-50 dark:bg-slate-900/50" id="solutions">
         <SolutionsSection />
       </MeshBackground>
 
@@ -41,12 +43,19 @@ const Home = () => {
       </div>
 
       {/* 7. PROJECTS: Deep Mesh for your portfolio carousel */}
-      <MeshBackground className="bg-slate-100 dark:bg-slate-900 py-10">
+      <MeshBackground className="bg-slate-100 dark:bg-slate-900 py-10" id="projects">
         <ProjectsSection />
       </MeshBackground>
 
       {/* 8. PRODUCTS: Final core section */}
       <ProductsSection />
+
+      {/* 9. REQUEST QUOTE CTA: Ending with a strong call-to-action */}
+      <div className="relative bg-white dark:bg-slate-950" id="request-quote-cta">
+        
+        <RequestQuoteCTA />
+        
+      </div>
     </div>
   );
 };

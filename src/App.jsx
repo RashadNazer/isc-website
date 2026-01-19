@@ -12,6 +12,7 @@ import Contact from './pages/Contact';
 import Projects from './pages/Projects';
 import PartnersPage from './pages/Products';
 import CustomersPage from './pages/Customers';
+import Enquiry from "./pages/Enquiry";
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/products" element={<PartnersPage />} />
           <Route path="/customers" element={<CustomersPage />} />
-          
+          <Route path="/enquiry" element={<Enquiry />} />
           {/* Fallback for undefined routes */}
           <Route path="*" element={<div className="py-40 text-center">404 - Page Not Found</div>} />
         </Routes>

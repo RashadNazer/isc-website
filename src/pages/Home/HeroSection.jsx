@@ -1,6 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import conceptImage from "../../assets/office.png"; 
+import { motion } from "framer-motion";
+import conceptImage from "../../assets/office.png";
+import { 
+  Reveal, 
+  MagneticButton, 
+  StatCounter 
+} from "../../components/UIComponents";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -14,74 +20,104 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="overflow-x-hidden transition-colors duration-500">
-      {/* 1. HERO SECTION */}
+    <div className="overflow-x-hidden">
+      {/* HERO SECTION - Background kept as your original gradient */}
       <section
         id="home"
-        /* LIGHT: Blue Gradient | DARK: Slate/Black Gradient */
         className="min-h-[100svh] pt-24 pb-12 md:pt-32 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center text-white relative overflow-hidden transition-all duration-700"
       >
-        {/* Background Blur Circle - Adapts color in Dark Mode */}
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-500/10 dark:bg-blue-400/5 rounded-full blur-3xl transition-colors"></div>
+        {/* Animated Background Element */}
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3] 
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-blue-400/20 dark:bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"
+        />
 
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative z-10">
           
           {/* CONTENT COLUMN */}
-          <div className="space-y-6 md:space-y-8 text-center lg:text-left">
-            <div>
-              <span className="inline-block px-4 py-1.5 mb-4 md:mb-6 text-[10px] md:text-sm font-bold tracking-widest text-blue-200 dark:text-blue-300 uppercase bg-blue-800/50 dark:bg-slate-800/50 border border-blue-700 dark:border-slate-700 rounded-full transition-colors">
-                40+ Years of Excellence
-              </span>
+          <div className="space-y-8 md:space-y-10 text-center lg:text-left">
+            <Reveal>
+              <div className="inline-flex items-center gap-4 px-4 py-2 bg-white/10 dark:bg-slate-800/50 backdrop-blur-md border border-white/20 dark:border-slate-700 rounded-full mb-4">
+                <span className="flex h-2 w-2 rounded-full bg-blue-400 animate-ping" />
+                <div className="text-[10px] md:text-sm font-bold tracking-[0.3em] text-blue-100 uppercase">
+                   Industrial Excellence Since 1984
+                </div>
+              </div>
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] mb-6">
-                From Concept to <br />
-                <span className="text-blue-400 dark:text-blue-500">Completion</span>
+              {/* Added text-balance for cleaner line breaks */}
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] mb-6 tracking-tighter text-balance">
+                Concept to <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-blue-500">
+                  Completion
+                </span>
               </h1>
 
-              <p className="text-base md:text-xl text-blue-100 dark:text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0 transition-colors">
-                As a premier leader in Electronic Systems Integration, ISC provides a
-                sophisticated ecosystem of technologies designed to drive operational
-                efficiency.
+              {/* Added text-justify and max-w-xl for the editorial look */}
+              <p className="text-base md:text-xl text-blue-100 dark:text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0 opacity-90 text-left md:text-justify hyphens-auto">
+                The premier leader in Electronic Systems Integration. ISC provides a
+                sophisticated ecosystem of technologies designed for global operational efficiency,
+                blending innovation with decades of technical mastery to secure your industrial future.
               </p>
-            </div>
+            </Reveal>
 
-            {/* BUTTONS */}
-            <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 justify-center lg:justify-start">
-              <button
-                onClick={(e) => scrollToSection(e, "solutions")}
-                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-blue-600 text-blue-900 dark:text-white font-bold rounded-lg shadow-lg hover:bg-blue-50 dark:hover:bg-blue-500 transition-all active:scale-95 text-sm md:text-base"
-              >
-                Our Solutions
-              </button>
+            {/* MAGNETIC BUTTONS GROUP */}
+            <Reveal delay={0.2}>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-5 justify-center lg:justify-start">
+                <MagneticButton>
+                  <button
+                    onClick={(e) => scrollToSection(e, "solutions")}
+                    className="w-full sm:w-auto px-10 py-5 bg-white text-blue-950 font-black rounded-2xl shadow-2xl hover:bg-blue-50 transition-all text-xs uppercase tracking-widest"
+                  >
+                    Our Solutions
+                  </button>
+                </MagneticButton>
 
-              <button
-                onClick={(e) => scrollToSection(e, "projects")}
-                className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-blue-600 text-blue-900 dark:text-white font-bold rounded-lg shadow-lg hover:bg-blue-50 dark:hover:bg-blue-500 transition-all active:scale-95 text-sm md:text-base"
-              >
-                Our Projects
-              </button>
+                <MagneticButton>
+                  <button
+                    onClick={() => navigate("/contact")}
+                    className="w-full sm:w-auto px-10 py-5 bg-blue-600/20 backdrop-blur-md border border-white/30 text-white font-black rounded-2xl hover:bg-blue-600/40 transition-all text-xs uppercase tracking-widest"
+                  >
+                    Contact Us
+                  </button>
+                </MagneticButton>
+              </div>
+            </Reveal>
 
-              <button
-                onClick={() => navigate("/contact")}
-                className="w-full sm:w-auto px-8 py-4 bg-transparent border border-blue-400 dark:border-slate-600 text-white dark:text-slate-300 font-bold rounded-lg hover:bg-blue-800/40 dark:hover:bg-slate-800 transition-all active:scale-95 text-sm md:text-base"
-              >
-                Contact Us
-              </button>
-            </div>
+            {/* HERO STATS */}
+            <Reveal delay={0.4}>
+              <div className="pt-10 flex flex-wrap justify-center lg:justify-start gap-10 border-t border-white/10 mt-10">
+                <StatCounter value={40} suffix="+" label="Years Experience" />
+                <StatCounter value={500} suffix="+" label="Global Projects" />
+              </div>
+            </Reveal>
           </div>
 
           {/* IMAGE COLUMN */}
-          <div className="relative order-first lg:order-last">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 dark:border-slate-700 p-2 md:p-4 rounded-2xl shadow-2xl max-w-[280px] md:max-w-none mx-auto transition-colors">
-              <div className="bg-blue-950/50 dark:bg-slate-900/80 aspect-square rounded-xl flex items-center justify-center border border-blue-700/50 dark:border-slate-700/50 overflow-hidden">
-                <img
-                  src={conceptImage}
-                  alt="Concept to Completion"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110 dark:opacity-80 dark:hover:opacity-100"
-                />
+          <Reveal delay={0.3} y={0}>
+            <motion.div 
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative order-first lg:order-last"
+            >
+              {/* Refined Glass Card for the image */}
+              <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 p-3 rounded-[3.5rem] shadow-2xl">
+                <div className="aspect-[4/5] md:aspect-square rounded-[3rem] overflow-hidden">
+                  <img
+                    src={conceptImage}
+                    alt="ISC Concept to Completion"
+                    className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000 scale-105 hover:scale-100"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
+              
+              {/* Decorative Ring behind image */}
+              <div className="absolute inset-0 border-2 border-blue-400/30 rounded-[3.5rem] -rotate-3 scale-105 -z-10" />
+            </motion.div>
+          </Reveal>
           
         </div>
       </section>

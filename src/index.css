@@ -1,8 +1,82 @@
 @import "tailwindcss";
 
-/* This tells Tailwind v4 to use the .dark class strategy */
+/* Tailwind v4 Dark Mode Strategy */
 @variant dark (&:where(.dark, .dark *));
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Transition for standard theme switching (fallback) */
+  html, body {
+    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
+  }
+}
+
+/* --- VIEW TRANSITIONS (Circular Reveal) --- */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+}
+
+/* Layering logic for the theme reveal */
+.dark::view-transition-old(root) { z-index: 1; }
+.dark::view-transition-new(root) { z-index: 999; }
+
+::view-transition-old(root) { z-index: 999; }
+::view-transition-new(root) { z-index: 1; }
+
+/* --- ICON ANIMATIONS --- */
+
+/* Specific Sun Animation */
+.sun-icon {
+  animation: sun-spin 0.5s ease-out;
+}
+
+@keyframes sun-spin {
+  from { transform: rotate(-90deg); }
+  to { transform: rotate(0deg); }
+}
+
+/* Specific Moon Animation (Now uniquely named) */
+.animate-moon {
+  animation: moon-slide 0.4s ease-out forwards;
+}
+
+@keyframes moon-slide {
+  from { 
+    transform: translateY(5px) rotate(10deg); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0) rotate(0); 
+    opacity: 1; 
+  }
+}
+
+/* --- UTILITIES --- */
+@layer utilities {
+  .fill-mode-both {
+    animation-fill-mode: both;
+  }
+  
+  /* Use this for your Mission/Vision boxes if you want a custom feel */
+  .animate-tab-content {
+    animation: tab-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    backface-visibility: hidden; /* Prevents jitter */
+  }
+}
+
+@keyframes tab-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

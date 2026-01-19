@@ -8,23 +8,24 @@ export default function Layout({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
-      if (currentScroll > 120) {
-        setIsScrolled(true);
-      } else if (currentScroll < 20) {
-        setIsScrolled(false);
-      }
+      setIsScrolled(currentScroll > 50);
     };
-    
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   const handleScrollLink = (e, id) => {
-    // If it's an external page link (like Career), let React Router handle it
+    setIsMenuOpen(false); // Close menu on click
     if (id.startsWith('/')) return;
 
     if (pathname === '/') {
@@ -35,7 +36,6 @@ export default function Layout({ children }) {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       }
     } else {
-      // If we are on Career/Contact and want to go to a Home section
       e.preventDefault();
       navigate(id === 'top' ? '/' : `/#${id}`);
     }
@@ -48,83 +48,106 @@ export default function Layout({ children }) {
     { name: 'Clients', path: 'customers-preview' },
     { name: 'Projects', path: 'projects' },
     { name: 'Products', path: 'products' },
-    { name: 'Career', path: '/career', type: 'route' }, // Changed to route
+    { name: 'Career', path: '/career', type: 'route' },
   ];
 
   return (
     <div className="min-h-screen bg-white font-sans flex flex-col">
-      <div className="h-52 md:h-52 w-full bg-white border-b border-slate-50 relative z-50">
-        <nav 
-          className={`fixed top-0 left-0 w-full bg-white z-[60] transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-            isScrolled ? 'h-20 shadow-md border-b' : 'h-52 border-b-0 shadow-none'
-          }`}
-        >
-          <div className="max-w-7xl mx-auto px-6 h-full relative overflow-hidden">
-            
-            {/* LOGO GROUP */}
-            <div className={`absolute transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] flex items-center ${
-              isScrolled ? 'top-1/2 -translate-y-1/2 left-6 translate-x-0' : 'top-10 left-1/2 -translate-x-1/2'
-            }`}>
-              <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-4 md:gap-8">
-                <img 
-                  src={logo} 
-                  alt="ISC" 
-                  className={`w-auto transition-all duration-700 ${isScrolled ? 'h-10 md:h-12' : 'h-24 md:h-28'}`} 
-                />
-                <div className={`bg-slate-200 hidden md:block transition-all duration-700 ${
-                  isScrolled ? 'h-6 w-[1px] mx-1' : 'h-16 w-[1.5px] mx-2'
-                }`}></div>
-                <div className={`bg-blue-900 rounded-xl flex items-center shadow-lg transition-all duration-700 ${
-                  isScrolled ? 'px-3 py-1.5' : 'px-6 py-4 rounded-2xl'
-                }`}>
-                  <img src={footerLogo} alt="Wordmark" className={`w-auto transition-all duration-700 ${isScrolled ? 'h-4 md:h-5' : 'h-8 md:h-10'}`} />
-                </div>
-              </Link>
-            </div>
+      {/* Dynamic Header Height Spacer */}
+      <div className={`${isScrolled ? 'h-20' : 'h-32 md:h-52'} w-full transition-all duration-700`} />
 
-            {/* MENU GROUP */}
-            <div className={`absolute transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] flex items-center ${
-              isScrolled ? 'top-1/2 -translate-y-1/2 right-6' : 'bottom-6 left-1/2 -translate-x-1/2'
-            }`}>
-              <div className={`flex items-center transition-all duration-700 ${isScrolled ? 'gap-x-4' : 'gap-x-6 lg:gap-x-8'}`}>
-                {navLinks.map((link) => (
-                  link.type === 'route' ? (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      className={`font-bold text-slate-600 hover:text-blue-900 transition-all uppercase tracking-widest whitespace-nowrap ${
-                        isScrolled ? 'text-[10px] lg:text-[11px]' : 'text-sm'
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
-                  ) : (
-                    <a 
-                      key={link.name} 
-                      href={`#${link.path}`}
-                      onClick={(e) => handleScrollLink(e, link.path)}
-                      className={`font-bold text-slate-600 hover:text-blue-900 transition-all uppercase tracking-widest whitespace-nowrap ${
-                        isScrolled ? 'text-[10px] lg:text-[11px]' : 'text-sm'
-                      }`}
-                    >
-                      {link.name}
-                    </a>
-                  )
-                ))}
-                <Link 
-                  to="/contact" 
-                  className={`bg-blue-900 text-white font-bold transition-all shadow-md active:scale-95 uppercase tracking-widest rounded-lg flex items-center justify-center whitespace-nowrap ${
-                    isScrolled ? 'px-3 py-1.5 text-[10px]' : 'px-6 py-2.5 text-sm ml-2'
-                  }`}
-                >
-                  Contact Us
-                </Link>
+      <nav 
+        className={`fixed top-0 left-0 w-full bg-white z-[100] transition-all duration-700 ease-in-out ${
+          isScrolled ? 'h-20 shadow-md' : 'h-32 md:h-52 shadow-none'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative">
+          
+          {/* LOGO GROUP - Responsive positioning */}
+          <div className={`transition-all duration-700 flex items-center ${
+            isScrolled ? 'scale-90' : 'scale-100'
+          }`}>
+            <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-2 md:gap-6">
+              <img 
+                src={logo} 
+                alt="ISC" 
+                className={`w-auto transition-all duration-700 ${isScrolled ? 'h-10' : 'h-16 md:h-24'}`} 
+              />
+              <div className={`bg-blue-900 rounded-lg flex items-center shadow-md transition-all duration-700 ${
+                isScrolled ? 'px-2 py-1' : 'px-4 py-2 md:px-6 md:py-4 md:rounded-2xl'
+              }`}>
+                <img src={footerLogo} alt="Wordmark" className={`w-auto transition-all duration-700 ${isScrolled ? 'h-3 md:h-4' : 'h-5 md:h-8'}`} />
               </div>
-            </div>
-
+            </Link>
           </div>
-        </nav>
-      </div>
+
+          {/* DESKTOP MENU - Hidden on Mobile */}
+          <div className="hidden lg:flex items-center gap-x-6">
+            {navLinks.map((link) => (
+              link.type === 'route' ? (
+                <Link key={link.name} to={link.path} className="font-bold text-slate-600 hover:text-blue-900 text-[11px] uppercase tracking-widest whitespace-nowrap">
+                  {link.name}
+                </Link>
+              ) : (
+                <a key={link.name} href={`#${link.path}`} onClick={(e) => handleScrollLink(e, link.path)} className="font-bold text-slate-600 hover:text-blue-900 text-[11px] uppercase tracking-widest whitespace-nowrap">
+                  {link.name}
+                </a>
+              )
+            ))}
+            <Link to="/contact" className="bg-blue-900 text-white px-5 py-2 rounded-lg font-bold text-[11px] uppercase tracking-widest shadow-md hover:bg-blue-800 transition-all">
+              Contact Us
+            </Link>
+          </div>
+
+          {/* HAMBURGER BUTTON - Visible only on Mobile/Tablet */}
+          <button 
+            className="lg:hidden p-2 text-blue-900"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* MOBILE DROPDOWN OVERLAY */}
+        <div className={`lg:hidden absolute top-full left-0 w-full bg-white border-b shadow-xl transition-all duration-500 ease-in-out origin-top ${
+          isMenuOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'
+        }`}>
+          <div className="flex flex-col p-6 gap-y-4">
+            {navLinks.map((link) => (
+              link.type === 'route' ? (
+                <Link 
+                  key={link.name} 
+                  to={link.path} 
+                  className="text-lg font-bold text-slate-700 border-b border-slate-50 pb-2"
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <a 
+                  key={link.name} 
+                  href={`#${link.path}`} 
+                  onClick={(e) => handleScrollLink(e, link.path)}
+                  className="text-lg font-bold text-slate-700 border-b border-slate-50 pb-2"
+                >
+                  {link.name}
+                </a>
+              )
+            ))}
+            <Link 
+              to="/contact" 
+              className="mt-2 bg-blue-900 text-white text-center py-4 rounded-xl font-bold text-lg shadow-lg"
+            >
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </nav>
 
       <main className="flex-grow">
         {children}

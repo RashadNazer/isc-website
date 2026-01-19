@@ -12,14 +12,19 @@ const AboutSection = () => {
         {/* 1. WHO WE ARE SECTION */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center mb-20 md:mb-32">
           <div className="relative">
+            {/* Pulsing background element - scaled for mobile */}
             <div className="absolute -top-6 -left-6 md:-top-10 md:-left-10 w-20 h-20 md:w-32 md:h-32 bg-blue-50 rounded-full -z-10 animate-pulse"></div>
+            
             <h2 className="text-blue-600 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-4">
               Establishing Excellence Since 1980
             </h2>
-            <h3 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 md:mb-8 leading-tight">
+            
+            {/* FONT SCALING: Prevents text breaking on small screens */}
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 mb-6 md:mb-8 leading-tight">
               Designed for Today,<br />
               <span className="text-blue-600">Ready for Tomorrow.</span>
             </h3>
+            
             <div className="space-y-4 md:space-y-6 text-slate-600 text-base md:text-lg leading-relaxed">
               <p>
                 At <span className="font-bold text-slate-900">ISC</span>, we continue to adapt state-of-the-art technology, methodology, and practices, helping project owners by designing and maintaining <span className="font-semibold text-blue-900">Low Current Systems</span>.
@@ -30,7 +35,7 @@ const AboutSection = () => {
             </div>
           </div>
 
-          {/* Stats Grid - 2 columns even on small mobile */}
+          {/* STATS GRID: Stays 2 columns on mobile but with tighter padding */}
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             {stats.map((stat, idx) => (
               <div key={idx} className="p-5 md:p-8 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-100 hover:border-blue-200 hover:bg-white hover:shadow-xl transition-all duration-500 group">
@@ -47,14 +52,16 @@ const AboutSection = () => {
 
         {/* 2. MISSION/VISION/VALUES BOX */}
         <div className="bg-blue-950 rounded-[2rem] md:rounded-[3rem] p-8 md:p-12 lg:p-20 text-white relative shadow-2xl mb-20 md:mb-32">
-          {/* Tabs - Scrollable on mobile to prevent wrapping issues */}
+          {/* TABS: Horizontal scrollable on small mobile to prevent stacking/wrapping */}
           <div className="flex flex-nowrap overflow-x-auto lg:flex-wrap gap-2 md:gap-4 mb-8 md:mb-12 border-b border-white/10 pb-6 scrollbar-hide">
             {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setAboutTab(tab)}
                 className={`px-6 md:px-8 py-2 md:py-3 rounded-full font-bold uppercase tracking-widest text-[10px] md:text-sm transition-all whitespace-nowrap active:scale-95 ${
-                  aboutTab === tab ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-400 hover:text-white"
+                  aboutTab === tab 
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" 
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
                 Our {tab}
@@ -62,7 +69,7 @@ const AboutSection = () => {
             ))}
           </div>
 
-          {/* Tab Content */}
+          {/* TAB CONTENT */}
           <div className="min-h-[200px] md:min-h-[300px]">
             {aboutTab === "mission" && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -94,7 +101,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 3. SUCCESS FORMULA (METHODOLOGY) */}
+        {/* 3. SUCCESS FORMULA (GRID SIZING) */}
         <div className="mb-20 md:mb-32">
           <div className="text-center mb-10 md:mb-16">
             <h3 className="text-blue-600 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-4">
@@ -105,6 +112,7 @@ const AboutSection = () => {
             </h4>
           </div>
 
+          {/* GRID SIZING: 1 col on mobile, 2 on tablet, 4 on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {[
               { title: "Customer-Centric", text: "We prioritize understanding unique needs and tailor technology to serve business objectives." },
@@ -123,7 +131,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 4. CERTIFICATES SECTION */}
+        {/* 4. CERTIFICATES (VISUAL ORDERING) */}
         <div className="mt-20 md:mt-32 pt-16 md:pt-20 border-t border-slate-100">
           <div className="text-center mb-12 md:mb-20">
             <h3 className="text-blue-600 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-4">Trust & Compliance</h3>
@@ -131,7 +139,7 @@ const AboutSection = () => {
           </div>
 
           <div className="space-y-20 md:space-y-32">
-            {/* HCIS - Stacks on mobile, Image comes first on mobile for better visual impact */}
+            {/* HCIS: Image-first on mobile using order utilities */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-center">
               <div className="order-2 lg:order-1 space-y-4 md:space-y-6 text-center lg:text-left">
                 <h4 className="text-2xl md:text-3xl font-black text-slate-900">Approved HCIS Contractor</h4>
@@ -146,7 +154,7 @@ const AboutSection = () => {
               </div>
             </div>
 
-            {/* ISO - Stacks on mobile */}
+            {/* ISO: Standard stacking */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-center">
               <div className="space-y-6 md:space-y-8 text-center lg:text-left">
                 <h4 className="text-2xl md:text-3xl font-black text-slate-900">International Standards</h4>

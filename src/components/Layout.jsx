@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useSpring } from 'framer-motion'; // Added Framer Motion
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
 import footerLogo from '../assets/footerlogo.png';
 import Footer from './Footer';
@@ -10,6 +10,7 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
@@ -19,6 +20,12 @@ export default function Layout({ children }) {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
+  });
+
+  // For the Back to Top circular progress
+  const scrollValue = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30
   });
 
   useEffect(() => {
@@ -73,6 +80,7 @@ export default function Layout({ children }) {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       setIsScrolled(currentScroll > 50);
+      setShowBackToTop(currentScroll > 400); // Show button after 400px
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -238,6 +246,36 @@ export default function Layout({ children }) {
       <main className="flex-grow">
         {children}
       </main>
+
+      {/* BACK TO TOP BUTTON */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-8 right-8 z-[150] p-3 bg-white dark:bg-slate-900 rounded-full shadow-2xl border border-slate-200 dark:border-slate-800 group"
+            aria-label="Back to Top"
+          >
+            {/* Circular Progress Ring */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90">
+              <motion.circle
+                cx="50%" cy="50%" r="22"
+                fill="transparent"
+                strokeWidth="2"
+                className="stroke-blue-600 dark:stroke-blue-400"
+                style={{ pathLength: scrollValue }}
+              />
+            </svg>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );

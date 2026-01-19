@@ -7,17 +7,17 @@ const SolutionsSection = () => {
   return (
     <section
       id="solutions"
-      className="py-16 md:py-24 bg-white border-t border-slate-100"
+      className="py-16 md:py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 transition-colors duration-500"
     >
       <div className="max-w-6xl mx-auto px-6">
 
-        {/* Header - Stacks on mobile */}
+        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4 md:gap-6">
           <div>
-            <h2 className="text-blue-600 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-2 md:mb-3">
+            <h2 className="text-blue-600 dark:text-blue-400 font-bold text-xs md:text-sm uppercase tracking-[0.2em] mb-2 md:mb-3">
               Industry Ready
             </h2>
-            <h3 className="text-3xl md:text-4xl font-black text-slate-900">
+            <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white transition-colors">
               Our Solutions
             </h3>
           </div>
@@ -25,7 +25,7 @@ const SolutionsSection = () => {
           {activeSol && (
             <button
               onClick={() => setActiveSol(null)}
-              className="flex items-center gap-2 text-slate-400 hover:text-blue-600 font-bold text-xs md:text-sm transition-colors border-b border-dotted border-slate-300 hover:border-blue-600 pb-1 w-fit active:scale-95"
+              className="flex items-center gap-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-xs md:text-sm transition-colors border-b border-dotted border-slate-300 dark:border-slate-700 hover:border-blue-600 pb-1 w-fit active:scale-95"
             >
               <span>Close All</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,18 +46,18 @@ const SolutionsSection = () => {
                 className={`rounded-[1.5rem] md:rounded-[2rem] overflow-hidden border transition-all duration-500
                   ${
                     isOpen
-                      ? "border-blue-200 shadow-xl md:shadow-2xl ring-1 ring-blue-50"
-                      : "border-slate-100 hover:border-slate-200"
+                      ? "border-blue-200 dark:border-blue-900 shadow-xl md:shadow-2xl ring-1 ring-blue-50 dark:ring-blue-900/20"
+                      : "border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700"
                   }`}
               >
-                {/* Header Button - Improved touch padding */}
+                {/* Header Button */}
                 <button
                   onClick={() => setActiveSol(isOpen ? null : sol)}
                   className={`w-full flex items-center justify-between p-6 md:p-9 text-left transition-all active:opacity-90
                     ${
                       isOpen
-                        ? "bg-blue-900 text-white"
-                        : "bg-white text-slate-800 hover:bg-slate-50"
+                        ? "bg-blue-900 dark:bg-blue-800 text-white"
+                        : "bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                     }`}
                 >
                   <div className="pr-4">
@@ -66,19 +66,19 @@ const SolutionsSection = () => {
                     </h4>
                     <p
                       className={`text-[10px] md:text-xs uppercase tracking-[0.15em] mt-1.5 font-semibold
-                        ${isOpen ? "text-blue-300" : "text-slate-400"}`}
+                        ${isOpen ? "text-blue-300 dark:text-blue-200" : "text-slate-400 dark:text-slate-500"}`}
                     >
                       {sol.subtitle}
                     </p>
                   </div>
 
-                  {/* Icon - Smaller on mobile */}
+                  {/* Icon */}
                   <div
                     className={`w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-xl md:rounded-2xl flex items-center justify-center border transition-all duration-500
                       ${
                         isOpen
-                          ? "border-blue-700 bg-blue-800 rotate-180"
-                          : "border-slate-200 bg-slate-50"
+                          ? "border-blue-700 dark:border-blue-600 bg-blue-800 dark:bg-blue-700 rotate-180"
+                          : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
                       }`}
                   >
                     <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,35 +89,36 @@ const SolutionsSection = () => {
 
                 {/* Content Area */}
                 {isOpen && (
-                  <div className="p-6 md:p-12 bg-white border-t border-slate-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="p-6 md:p-12 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-2 duration-300">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
 
-                      {/* IMAGE: Visual Ordering - Above text list on mobile */}
+                      {/* IMAGE */}
                       <div className="relative order-1 lg:order-2">
-                        <div className="absolute -inset-2 md:-inset-4 bg-slate-50 rounded-[1.5rem] md:rounded-[2.5rem] -z-10"></div>
+                        {/* Pulse background adapts to theme */}
+                        <div className="absolute -inset-2 md:-inset-4 bg-slate-50 dark:bg-slate-800 rounded-[1.5rem] md:rounded-[2.5rem] -z-10"></div>
                         <img
                           src={sol.image}
                           alt={sol.title}
-                          className="w-full h-48 md:h-auto rounded-2xl md:rounded-3xl shadow-lg border border-white object-cover"
+                          className="w-full h-48 md:h-auto rounded-2xl md:rounded-3xl shadow-lg border border-white dark:border-slate-700 object-cover"
                         />
-                        <div className="hidden md:block absolute -bottom-4 -right-4 w-24 h-24 bg-blue-600/10 rounded-full blur-2xl"></div>
+                        <div className="hidden md:block absolute -bottom-4 -right-4 w-24 h-24 bg-blue-600/10 dark:bg-blue-400/10 rounded-full blur-2xl"></div>
                       </div>
 
-                      {/* TEXT & FEATURES: Order 2 on mobile */}
+                      {/* TEXT & FEATURES */}
                       <div className="space-y-6 md:space-y-8 order-2 lg:order-1">
-                        <p className="text-slate-600 text-base md:text-lg leading-relaxed">
+                        <p className="text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed">
                           {sol.description}
                         </p>
 
                         <div className="grid grid-cols-1 gap-3 md:gap-4">
                           {sol.features.map((feature, i) => (
-                            <div key={i} className="flex items-start gap-3 md:gap-4">
-                              <div className="mt-1 w-5 h-5 md:w-6 md:h-6 rounded-md md:rounded-lg bg-blue-50 flex-shrink-0 flex items-center justify-center text-blue-600">
+                            <div key={i} className="flex items-start gap-3 md:gap-4 group">
+                              <div className="mt-1 w-5 h-5 md:w-6 md:h-6 rounded-md md:rounded-lg bg-blue-50 dark:bg-blue-900/30 flex-shrink-0 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                 <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                 </svg>
                               </div>
-                              <span className="text-slate-700 font-semibold text-sm md:text-base">
+                              <span className="text-slate-700 dark:text-slate-300 font-semibold text-sm md:text-base">
                                 {feature}
                               </span>
                             </div>
@@ -132,7 +133,6 @@ const SolutionsSection = () => {
             );
           })}
         </div>
-
       </div>
     </section>
   );

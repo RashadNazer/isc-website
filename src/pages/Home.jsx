@@ -25,8 +25,10 @@ const Home = () => {
         <AboutSection />
       </section>
 
-      {/* 3. SERVICES: Clean white background */}
-      <ServicesSection />
+      <div className="relative" id='services'>
+        {/* 3. SERVICES: Clean white background */}
+        <ServicesSection />
+      </div>
 
       {/* 4. SOLUTIONS: Add depth with Mesh */}
       <MeshBackground className="bg-slate-50 dark:bg-slate-900/50" id="solutions">

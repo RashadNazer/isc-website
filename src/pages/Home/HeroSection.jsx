@@ -106,7 +106,7 @@ const HeroSection = () => {
             <Reveal delay={0.4}>
               <div className="pt-10 flex flex-wrap justify-center lg:justify-start gap-10 border-t border-white/10 mt-10">
                 <StatCounter value={40} suffix="+" label="Years Experience" />
-                <StatCounter value={500} suffix="+" label="Global Projects" />
+                <StatCounter value={2000} suffix="+" label="Completed Projects" />
               </div>
             </Reveal>
           </div>

@@ -3,183 +3,147 @@ import { solutionData } from "../../data/homeData";
 import { motion, AnimatePresence } from "framer-motion";
 
 const SolutionsSection = () => {
-  const [activeSol, setActiveSol] = useState(null);
+  const [activeSol, setActiveSol] = useState(solutionData[0]);
 
   return (
-    <section
-      id="solutions"
-      className="py-16 md:py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 transition-colors duration-500"
-    >
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-20 gap-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl"
+    <section id="solutions" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-500 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        {/* HEADER */}
+        <div className="mb-16 md:mb-24">
+          <motion.h2 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-blue-600 font-bold text-sm uppercase tracking-[0.3em] mb-4"
           >
-            <h2 className="text-blue-600 dark:text-blue-400 font-bold text-xs md:text-sm uppercase tracking-[0.3em] mb-4">
-              Industry Ready
-            </h2>
-            <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white transition-colors leading-[1.1]">
-              Our Solutions
-            </h3>
-          </motion.div>
-
-          {activeSol && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              onClick={() => setActiveSol(null)}
-              className="flex items-center gap-2 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 font-bold text-xs md:text-sm transition-all border-b border-dotted border-slate-300 dark:border-slate-700 hover:border-blue-600 pb-1 w-fit active:scale-95 mb-1"
-            >
-              <span>Close All</span>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </motion.button>
-          )}
+            Industry Ready
+          </motion.h2>
+          <motion.h3 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white"
+          >
+            Our <span className="text-blue-600">Solutions.</span>
+          </motion.h3>
         </div>
 
-        {/* Accordion Container */}
-        <div className="space-y-5 md:space-y-6">
-          {solutionData.map((sol) => {
-            const isOpen = activeSol?.id === sol.id;
-
-            return (
-              <motion.div
-                key={sol.id}
-                layout
-                initial={false}
-                className={`rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border transition-all duration-500
-                  ${
-                    isOpen
-                      ? "border-blue-200 dark:border-blue-900 shadow-2xl ring-1 ring-blue-50 dark:ring-blue-900/10"
-                      : "border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700"
-                  }`}
-              >
-                {/* Header Button */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+          
+          {/* LEFT: INTERACTIVE SELECTORS */}
+          <div className="lg:col-span-4 space-y-4">
+            {solutionData.map((sol) => {
+              const isActive = activeSol.id === sol.id;
+              return (
                 <button
-                  onClick={() => setActiveSol(isOpen ? null : sol)}
-                  className={`w-full flex items-center justify-between p-8 md:p-10 text-left transition-all relative z-10
-                    ${
-                      isOpen
-                        ? "bg-blue-900 dark:bg-blue-800 text-white"
-                        : "bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }`}
+                  key={sol.id}
+                  onClick={() => setActiveSol(sol)}
+                  className={`group relative w-full text-left p-6 rounded-3xl transition-all duration-500 border ${
+                    isActive 
+                      ? "bg-blue-600 border-blue-600 shadow-xl shadow-blue-500/20" 
+                      : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700"
+                  }`}
                 >
-                  <div className="pr-6">
-                    <h4 className="text-xl md:text-3xl font-bold leading-tight">
+                  <div className="relative z-10">
+                    <span className={`text-[10px] uppercase tracking-widest font-bold mb-2 block ${
+                      isActive ? "text-blue-100" : "text-blue-600"
+                    }`}>
+                      {sol.subtitle}
+                    </span>
+                    <h4 className={`text-xl font-bold transition-colors ${
+                      isActive ? "text-white" : "text-slate-900 dark:text-slate-100"
+                    }`}>
                       {sol.title}
                     </h4>
-                    <p className={`text-[10px] md:text-xs uppercase tracking-[0.2em] mt-2 font-bold transition-colors
-                        ${isOpen ? "text-blue-300 dark:text-blue-200" : "text-slate-400 dark:text-slate-500"}`}
-                    >
-                      {sol.subtitle}
-                    </p>
                   </div>
-
-                  {/* Icon with Rotate Animation */}
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    className={`w-12 h-12 md:w-14 md:h-14 flex-shrink-0 rounded-2xl flex items-center justify-center border transition-all
-                      ${
-                        isOpen
-                          ? "border-blue-700 dark:border-blue-600 bg-blue-800 dark:bg-blue-700"
-                          : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-                      }`}
-                  >
-                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </motion.div>
-                </button>
-
-                {/* SMOOTHER HEIGHT REVEAL */}
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ 
-                        height: "auto", 
-                        opacity: 1,
-                        transition: {
-                          height: {
-                            type: "spring",
-                            damping: 30, // Higher damping = smoother, no bounce
-                            stiffness: 150,
-                          },
-                          opacity: { duration: 0.4, delay: 0.1 }
-                        }
-                      }}
-                      exit={{ 
-                        height: 0, 
-                        opacity: 0,
-                        transition: {
-                          height: { duration: 0.3, ease: "easeInOut" },
-                          opacity: { duration: 0.2 }
-                        }
-                      }}
+                  
+                  {/* Active Indicator Arrow */}
+                  {isActive && (
+                    <motion.div 
+                      layoutId="arrow"
+                      className="absolute -right-3 top-1/2 -translate-y-1/2 hidden lg:block"
                     >
-                      <div className="p-8 md:p-16 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
-                          
-                          {/* Image Column - Slight delay and scale-up */}
-                          <motion.div 
-                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2, type: "spring", damping: 20 }}
-                            className="relative order-1 lg:order-2"
-                          >
-                            <div className="absolute -inset-4 bg-slate-50 dark:bg-slate-800/50 rounded-[3rem] -z-10"></div>
-                            <img
-                              src={sol.image}
-                              alt={sol.title}
-                              className="w-full aspect-video md:aspect-square rounded-[2rem] shadow-xl border border-white dark:border-slate-700 object-cover"
-                            />
-                          </motion.div>
-
-                          {/* Content Column - Staggered slide up */}
-                          <motion.div 
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.25, duration: 0.5, ease: "easeOut" }}
-                            className="space-y-10 order-2 lg:order-1"
-                          >
-                            <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl leading-relaxed text-left">
-                              {sol.description}
-                            </p>
-
-                            <div className="grid grid-cols-1 gap-5">
-                              {sol.features.map((feature, i) => (
-                                <motion.div 
-                                  key={i} 
-                                  initial={{ x: -10, opacity: 0 }}
-                                  animate={{ x: 0, opacity: 1 }}
-                                  transition={{ delay: 0.3 + (i * 0.05) }} // Each checkmark pops in one by one
-                                  className="flex items-start gap-4 group"
-                                >
-                                  <div className="mt-1 w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex-shrink-0 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 transition-all duration-300">
-                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                  </div>
-                                  <span className="text-slate-700 dark:text-slate-300 font-bold text-base md:text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors text-left">
-                                    {feature}
-                                  </span>
-                                </motion.div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        </div>
-                      </div>
+                      <div className="w-6 h-6 bg-blue-600 rotate-45" />
                     </motion.div>
                   )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* RIGHT: LIVE PREVIEW TERMINAL */}
+          <div className="lg:col-span-8">
+            <div className="relative h-full min-h-[600px] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border border-slate-800">
+              
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSol.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
+                >
+                  {/* Background Image with Overlay */}
+                  <img 
+                    src={activeSol.image} 
+                    alt={activeSol.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-40 scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
+                  
+                  {/* Decorative "Scanning" Line */}
+                  <motion.div 
+                    initial={{ top: "-10%" }}
+                    animate={{ top: "110%" }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    className="absolute left-0 right-0 h-[2px] bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] z-10 pointer-events-none"
+                  />
+
+                  {/* Content Overlay */}
+                  <div className="relative h-full p-8 md:p-16 flex flex-col justify-end">
+                    <div className="max-w-2xl">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <h4 className="text-3xl md:text-5xl font-black text-white mb-6">
+                          {activeSol.title}
+                        </h4>
+                        <p className="text-slate-300 text-lg md:text-xl leading-relaxed mb-10">
+                          {activeSol.description}
+                        </p>
+                      </motion.div>
+
+                      {/* Feature Tags */}
+                      <div className="flex flex-wrap gap-3">
+                        {activeSol.features.map((feature, i) => (
+                          <motion.span
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.3 + (i * 0.1) }}
+                            className="px-5 py-2 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white text-sm font-medium"
+                          >
+                            {feature}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Corner Tech Decorative Elements */}
+              <div className="absolute top-8 right-8 flex gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-slate-700" />
+                <div className="w-2 h-2 rounded-full bg-slate-700" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

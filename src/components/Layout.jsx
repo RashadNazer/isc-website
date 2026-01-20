@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
@@ -9,6 +9,7 @@ export default function Layout({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState(''); // Tracking for dots
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
@@ -19,6 +20,30 @@ export default function Layout({ children }) {
 
   const slowEase = "duration-1000 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]";
 
+  // 1. Dot Navigation Links
+  const dotLinks = useMemo(() => [
+    { name: 'About Us', path: 'about' },
+    { name: 'Services', path: 'services' },
+    { name: 'Solutions', path: 'solutions' },
+    { name: 'Support', path: 'support' },
+    { name: 'Our Clients', path: 'customers-preview' },
+    { name: 'Projects', path: 'projects' },
+    { name: 'Products', path: 'products' },
+    { name: 'Request Quote', path: 'request-quote-cta' },
+  ], []);
+
+  const navLinks = [
+    { name: 'About Us', path: 'about' },
+    { name: 'Services', path: 'services' },
+    { name: 'Solutions', path: 'solutions' },
+    { name: 'Support', path: 'support' },
+    { name: 'Clients', path: 'customers-preview' },
+    { name: 'Projects', path: 'projects' },
+    { name: 'Products', path: 'products' },
+    { name: 'Career', path: '/career', type: 'route' },
+  ];
+
+  // 2. Theme Logic
   useEffect(() => {
     const root = document.documentElement;
     theme === 'dark' ? root.classList.add('dark') : root.classList.remove('dark');
@@ -43,15 +68,35 @@ export default function Layout({ children }) {
     });
   };
 
+  // 3. Combined Scroll & Observer Logic
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       setIsScrolled(currentScroll > 60); 
-      setShowBackToTop(currentScroll > 400); // Button appears after 400px
+      setShowBackToTop(currentScroll > 400);
+      if (currentScroll < 100) setActiveSection(dotLinks[0].path);
     };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-30% 0px -30% 0px', threshold: 0.1 }
+    );
+
+    dotLinks.forEach(link => {
+      const el = document.getElementById(link.path);
+      if (el) observer.observe(el);
+    });
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
+  }, [dotLinks]);
 
   useEffect(() => { setIsMenuOpen(false); }, [pathname]);
 
@@ -61,23 +106,15 @@ export default function Layout({ children }) {
     if (pathname === '/') {
       e.preventDefault();
       if (id === 'top') window.scrollTo({ top: 0, behavior: 'smooth' });
-      else document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      else {
+        const target = document.getElementById(id);
+        if (target) window.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' });
+      }
     } else {
       e.preventDefault();
       navigate(id === 'top' ? '/' : `/#${id}`);
     }
   };
-
-  const navLinks = [
-    { name: 'About Us', path: 'about' },
-    { name: 'Services', path: 'services' },
-    { name: 'Solutions', path: 'solutions' },
-    { name: 'Support', path: 'support' },
-    { name: 'Clients', path: 'customers-preview' },
-    { name: 'Projects', path: 'projects' },
-    { name: 'Products', path: 'products' },
-    { name: 'Career', path: '/career', type: 'route' },
-  ];
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-700">
@@ -88,7 +125,7 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-6 h-full relative">
           
           {/* LOGO GROUP */}
-          <div className={`absolute transition-all ${slowEase} flex items-center ${isScrolled ? 'left-6 top-1/2 -translate-y-1/2 translate-x-0 scale-100' : 'left-1/2 top-8 md:top-12 -translate-x-1/2 scale-125 md:scale-150'}`}>
+          <div className={`absolute transition-all ${slowEase} flex items-center z-[110] ${isScrolled ? 'left-6 top-1/2 -translate-y-1/2 translate-x-0 scale-100' : 'left-1/2 top-8 md:top-12 -translate-x-1/2 scale-125 md:scale-150'}`}>
             <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-3 md:gap-5">
               <img src={logo} alt="ISC" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-12' : 'h-20 md:h-28'} dark:brightness-125`} />
               <div className={`bg-blue-900 rounded-lg flex items-center shadow-lg transition-all ${slowEase} ${isScrolled ? 'px-4 py-2' : 'px-6 py-3 md:px-8 md:py-5 md:rounded-2xl'}`}>
@@ -97,19 +134,23 @@ export default function Layout({ children }) {
             </Link>
           </div>
 
-          {/* NAV LINKS */}
-          <div className={`absolute transition-all ${slowEase} flex items-center ${isScrolled ? 'right-6 top-1/2 -translate-y-1/2 translate-x-0 w-auto' : 'left-1/2 bottom-10 -translate-x-1/2 w-full justify-center'}`}>
+          {/* NAV LINKS + ACTION BUTTONS */}
+          <div className={`absolute transition-all ${slowEase} flex items-center ${isScrolled ? 'right-6 top-1/2 -translate-y-1/2 translate-x-0 w-auto' : 'left-0 bottom-10 w-full justify-center px-6'}`}>
             <div className={`hidden lg:flex items-center transition-all ${slowEase} ${isScrolled ? 'gap-x-4 xl:gap-x-6' : 'gap-x-8 xl:gap-x-10'}`}>
               {navLinks.map((link) => (
-                <Link key={link.name} to={link.type === 'route' ? link.path : '#'} onClick={link.type !== 'route' ? (e) => handleScrollLink(e, link.path) : undefined} className={`font-bold text-slate-600 dark:text-slate-300 hover:text-blue-900 dark:hover:text-blue-400 uppercase tracking-widest whitespace-nowrap transition-all ${slowEase} ${isScrolled ? 'text-[11px]' : 'text-[13px]'}`}>{link.name}</Link>
+                <Link key={link.name} to={link.type === 'route' ? link.path : '#'} onClick={link.type !== 'route' ? (e) => handleScrollLink(e, link.path) : undefined} className={`font-bold text-slate-600 dark:text-slate-300 hover:text-blue-900 dark:hover:text-blue-400 uppercase tracking-widest whitespace-nowrap transition-all ${slowEase} ${isScrolled ? 'text-[11px]' : 'text-[13px]'}`}>
+                  {link.name}
+                </Link>
               ))}
-              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }} className="ml-2">
-                <Link to="/contact" className={`bg-blue-900 text-white rounded-lg font-bold uppercase tracking-widest shadow-md hover:bg-blue-800 transition-all ${slowEase} whitespace-nowrap block ${isScrolled ? 'px-5 py-2.5 text-[11px]' : 'px-7 py-3.5 text-[13px]'}`}>Contact Us</Link>
+              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }} className="ml-12">
+                <Link to="/contact" className={`bg-blue-900 text-white rounded-lg font-bold uppercase tracking-widest shadow-md hover:bg-blue-800 transition-all ${slowEase} whitespace-nowrap block ${isScrolled ? 'px-5 py-2.5 text-[11px]' : 'px-7 py-3.5 text-[13px]'}`}>
+                  Contact Us
+                </Link>
               </motion.div>
             </div>
 
-            {/* THEME & MOBILE MENU BUTTONS */}
-            <div className={`flex items-center gap-4 ml-4 transition-all ${slowEase} ${!isScrolled && 'lg:absolute lg:-right-4'}`}>
+            {/* THEME & MOBILE BUTTONS */}
+            <div className={`flex items-center gap-4 ml-6 transition-all ${slowEase} ${!isScrolled && 'lg:absolute lg:right-6'}`}>
               <button onClick={(e) => toggleTheme(e)} className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:ring-2 ring-blue-500 transition-all overflow-hidden flex-shrink-0">
                 {theme === 'light' ? (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
@@ -126,6 +167,22 @@ export default function Layout({ children }) {
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600 dark:bg-blue-400 origin-[0%] z-[110]" style={{ scaleX }} />
       </nav>
 
+      {/* FLOATING DOT NAVIGATION (Restore) */}
+      <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-5 items-end group">
+        {dotLinks.map((link) => (
+          <button key={link.path} onClick={(e) => handleScrollLink(e, link.path)} className="flex items-center gap-4 group/item">
+            <span className={`text-[10px] font-bold uppercase tracking-widest text-blue-900 dark:text-blue-400 transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 whitespace-nowrap`}>
+              {link.name}
+            </span>
+            <div className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-500 
+              ${activeSection === link.path 
+                ? 'bg-blue-900 border-blue-900 scale-150 shadow-[0_0_12px_rgba(30,58,138,0.4)]' 
+                : 'bg-transparent border-slate-300 dark:border-slate-600 group-hover:border-blue-400'}`} 
+            />
+          </button>
+        ))}
+      </aside>
+
       <main className="flex-grow">{children}</main>
 
       {/* RESTORED BACK TO TOP BUTTON */}
@@ -136,19 +193,35 @@ export default function Layout({ children }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-8 right-8 z-[150] p-3 bg-white dark:bg-slate-900 rounded-full shadow-2xl border border-slate-200 dark:border-slate-800 group"
+            // Positioned right-8 but with a high z-index and distinct styling
+            className="fixed bottom-10 right-10 z-[200] p-4 bg-blue-900 dark:bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-800 transition-all group"
           >
+            {/* Progress Circle */}
             <svg className="absolute inset-0 w-full h-full -rotate-90">
-              <motion.circle
-                cx="50%" cy="50%" r="22"
-                fill="transparent"
-                strokeWidth="2"
-                className="stroke-blue-600 dark:stroke-blue-400"
-                style={{ pathLength: scrollValue }}
+              <motion.circle 
+                cx="50%" cy="50%" r="26" 
+                fill="transparent" 
+                strokeWidth="3" 
+                stroke="rgba(255,255,255,0.2)" 
+              />
+              <motion.circle 
+                cx="50%" cy="50%" r="26" 
+                fill="transparent" 
+                strokeWidth="3" 
+                stroke="white" 
+                style={{ pathLength: scrollValue }} 
               />
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            
+            {/* Arrow Icon */}
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-6 w-6 relative z-10 group-hover:-translate-y-1 transition-transform" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
           </motion.button>
         )}

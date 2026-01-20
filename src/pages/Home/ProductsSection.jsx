@@ -5,12 +5,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Reveal, MagneticButton } from "../../components/UIComponents";
 
 const ProductsSection = () => {
-  // Mobile: Active state usually managed by click/tap
+  /**
+   * STATE MANAGEMENT
+   * activeId: Tracks which partner card is currently expanded.
+   * On Mobile: Managed via onClick (tap to toggle).
+   * On Desktop: Managed via onMouseEnter/onMouseLeave (hover to expand).
+   */
   const [activeId, setActiveId] = useState(null);
+  
+  // Display only the first 5 partners for the landing page preview
   const previewPartners = partnerData?.slice(0, 5) || [];
 
+  /**
+   * INTERACTION HANDLER
+   * Primarily for mobile users to toggle cards.
+   */
   const handleInteraction = (id) => {
-    // If clicking the same one, close it; otherwise open new one
     setActiveId(activeId === id ? null : id);
   };
 
@@ -18,7 +28,7 @@ const ProductsSection = () => {
     <section id="products" className="py-16 md:py-24 bg-white dark:bg-slate-950 transition-colors duration-500 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* Header Section */}
+        {/* HEADER SECTION: Includes responsive typography and a magnetic CTA button */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 md:mb-16 gap-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -55,8 +65,10 @@ const ProductsSection = () => {
           </div>
         </div>
 
-        {/* Responsive Accordion Grid */}
-        {/* Mobile: flex-col (Vertical Expansion) | Desktop: flex-row (Horizontal Expansion) */}
+        {/* RESPONSIVE ACCORDION GRID 
+          Mobile: flex-col -> Cards expand vertically using minHeight.
+          Desktop: flex-row -> Cards expand horizontally using the 'flex' property.
+        */}
         <div className="flex flex-col lg:flex-row gap-4 items-stretch min-h-[500px] lg:min-h-[400px]">
           {previewPartners.map((partner) => {
             const isActive = activeId === partner.id;
@@ -64,13 +76,15 @@ const ProductsSection = () => {
             return (
               <motion.div
                 key={partner.id}
-                layout
+                layout // Smoothly animates layout changes (flex/height)
                 onClick={() => handleInteraction(partner.id)}
+                // Hover behavior restricted to desktop only (screen width > 1024px)
                 onMouseEnter={() => window.innerWidth > 1024 && setActiveId(partner.id)}
                 onMouseLeave={() => window.innerWidth > 1024 && setActiveId(null)}
                 animate={{
-                  // Desktop expands width (flex), Mobile expands height (min-height)
+                  // Desktop: Active card takes 3x the space of others
                   flex: isActive ? 3 : 1,
+                  // Mobile: Active card grows in height to reveal text
                   minHeight: isActive ? "280px" : "120px"
                 }}
                 transition={{ 
@@ -90,7 +104,7 @@ const ProductsSection = () => {
                 <div className="p-6 md:p-10 flex flex-col h-full">
                   <div className={`h-full flex ${isActive ? 'flex-row lg:flex-col' : 'flex-col'} items-center lg:items-start justify-center gap-6`}>
                     
-                    {/* LOGO AREA */}
+                    {/* LOGO AREA: Becomes more prominent and colorful when active */}
                     <motion.div
                       layout
                       className={`
@@ -105,7 +119,10 @@ const ProductsSection = () => {
                       />
                     </motion.div>
 
-                    {/* EXPANDABLE CONTENT */}
+                    {/* EXPANDABLE CONTENT 
+                      AnimatePresence handles the entry/exit animations of the text.
+                      mode="wait" ensures old content leaves before new content enters.
+                    */}
                     <AnimatePresence mode="wait">
                       {isActive && (
                         <motion.div

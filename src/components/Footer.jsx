@@ -3,10 +3,17 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/footerlogo.png';
 
 export default function Footer() {
+  // Automatically updates the copyright year
   const currentYear = new Date().getFullYear();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  /**
+   * handleScrollLink Logic:
+   * 1. If user is on the Home page ('/'), it performs a smooth scroll to the target ID.
+   * 2. If user is on a different page (e.g., /projects), it navigates home first, 
+   * then appends the hash (e.g., /#about) so the browser can jump to that section.
+   */
   const handleScrollLink = (e, id) => {
     if (pathname === '/') {
       e.preventDefault();
@@ -19,6 +26,7 @@ export default function Footer() {
         }
       }
     } else {
+      // Navigate to home page with hash if not currently on home
       navigate(id === 'top' ? '/' : `/#${id}`);
     }
   };
@@ -27,14 +35,19 @@ export default function Footer() {
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* MAIN GRID: 1 col on mobile, 2 on tablet, 4 on desktop */}
+        {/* MAIN GRID SYSTEM:
+          - grid-cols-1: Single column for mobile (stacked)
+          - sm:grid-cols-2: Two columns for tablets
+          - lg:grid-cols-4: Four columns for desktop
+        */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           
-          {/* Column 1: Brand/Company */}
+          {/* Column 1: Brand/Company Identity */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <img 
               src={logo} 
               alt="ISC Logo" 
+              // brightness-0 invert makes the logo white to match the dark footer theme
               className="h-10 md:h-12 w-auto mb-6 brightness-0 invert opacity-90" 
             />
             <p className="text-sm leading-relaxed text-slate-400 max-w-xs">
@@ -42,7 +55,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Column 2: Navigation - Split into 2 columns on small mobile if needed, but 1 is cleaner */}
+          {/* Column 2: Internal Section Navigation */}
           <div className="text-center sm:text-left">
             <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Quick Links</h4>
             <ul className="space-y-4 text-sm">
@@ -84,7 +97,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Resources */}
+          {/* Column 3: External Portals and Secondary Links */}
           <div className="text-center sm:text-left">
             <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Resources</h4>
             <ul className="space-y-4 text-sm">
@@ -96,6 +109,7 @@ export default function Footer() {
                   className="hover:text-blue-400 transition-colors flex items-center justify-center sm:justify-start gap-2"
                 >
                   MC Portal 
+                  {/* Visual "Login" badge for the portal link */}
                   <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded tracking-tighter">LOGIN</span>
                 </a>
               </li>
@@ -104,7 +118,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Headquarters */}
+          {/* Column 4: Contact & Office Information */}
           <div className="text-center sm:text-left">
             <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Headquarters</h4>
             <div className="space-y-3 text-sm text-slate-400">
@@ -118,8 +132,12 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* BOTTOM BAR: Stacked on mobile */}
+        {/* BOTTOM BAR: 
+          - flex-col: Stacked on mobile
+          - lg:flex-row: Side-by-side on desktop
+        */}
         <div className="pt-8 border-t border-slate-800 flex flex-col lg:flex-row justify-between items-center gap-6 text-[10px] md:text-xs font-medium text-slate-500 text-center">
+          {/* Order-2 puts copyright below links on mobile, Order-1 puts it first on desktop */}
           <p className="order-2 lg:order-1">
             Copyright © {currentYear} - International Security & Communications Co. <span className="hidden md:inline">|</span> <br className="md:hidden" /> All rights reserved
           </p>

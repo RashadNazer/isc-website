@@ -4,23 +4,38 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal, StatCounter } from "../../components/UIComponents";
 
 const AboutSection = () => {
+  // Reference for the sticky scroll container
   const containerRef = useRef(null);
   
+  // Track scroll progress within the containerRef
+  // offset: ["start start", "end end"] means tracking starts when the top of the 
+  // container hits the top of the viewport and ends when the bottom hits the bottom.
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  // Desktop Animation Transforms
+  /**
+   * DESKTOP SCROLL ANIMATION LOGIC
+   * We divide the scroll progress (0 to 1) into three main phases:
+   * 1. Mission (0.00 - 0.33)
+   * 2. Vision  (0.33 - 0.66)
+   * 3. Values  (0.66 - 1.00)
+   */
+
+  // Mission: Starts visible, fades out at 33% scroll
   const missionOpacity = useTransform(scrollYProgress, [0, 0.25, 0.33], [1, 1, 0]);
   const missionY = useTransform(scrollYProgress, [0, 0.33], [0, -40]);
 
+  // Vision: Fades in at 33%, remains until 60%, fades out by 66%
   const visionOpacity = useTransform(scrollYProgress, [0.33, 0.4, 0.6, 0.66], [0, 1, 1, 0]);
   const visionY = useTransform(scrollYProgress, [0.33, 0.4, 0.6, 0.66], [40, 0, 0, -40]);
 
+  // Values: Fades in at 66%, remains visible until the end
   const valuesOpacity = useTransform(scrollYProgress, [0.66, 0.75, 1], [0, 1, 1]);
   const valuesY = useTransform(scrollYProgress, [0.66, 0.75], [40, 0]);
 
+  // Data mapping for the first two slides
   const sections = [
     { 
       id: "mission", 
@@ -44,7 +59,7 @@ const AboutSection = () => {
     <section id="about" className="relative bg-white dark:bg-slate-950 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-32">
         
-        {/* 1. WHO WE ARE & STATS */}
+        {/* SECTION 1: INTRODUCTION & KEY METRICS (STAT COUNTERS) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-24 items-center mb-16 md:mb-32">
             <Reveal>
               <h3 className="text-3xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
@@ -58,6 +73,8 @@ const AboutSection = () => {
                 As a leader with <span className="text-blue-700 dark:text-blue-400 font-bold text-xl">40+ years</span> of rich experience in Saudi Arabia, we provide reliable systems and safe environments that empower infrastructure across the Kingdom.
               </p>
             </Reveal>
+
+            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4 md:gap-6">
                {stats.map((stat, i) => (
                  <div key={i} className="p-6 md:p-8 bg-slate-50 dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-100 dark:border-slate-800">
@@ -67,16 +84,19 @@ const AboutSection = () => {
             </div>
         </div>
 
-        {/* 2. STICKY MISSION/VISION/VALUES */}
-        {/* Mobile: h-auto (normal flow) | Desktop: h-[250vh] (sticky) */}
+        {/* SECTION 2: STICKY INTERACTIVE BOX (Mission, Vision, Values) */}
+        {/* On Mobile: Container is 'h-auto' so cards stack vertically.
+            On Desktop: Container is 'h-[250vh]' to create scroll distance for the sticky inner div.
+        */}
         <div ref={containerRef} className="relative h-auto lg:h-[250vh] mb-20">
           <div className="lg:sticky lg:top-0 lg:h-screen flex items-center">
             
-            {/* GLASSMORPHISM BOX */}
+            {/* Main Glassmorphism Container */}
             <div className="w-full bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-white relative shadow-2xl border border-white/10 backdrop-blur-xl overflow-hidden">
+              {/* Background Glow Effect */}
               <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-blue-600/10 blur-[80px] md:blur-[120px] pointer-events-none"></div>
 
-              {/* DESKTOP CONTENT (Stacked Layers) */}
+              {/* DESKTOP VIEW: Stacked Absolute Layers (Animated by Framer Motion) */}
               <div className="hidden lg:block relative h-[400px]">
                 {sections.map((section) => (
                   <motion.div
@@ -90,6 +110,7 @@ const AboutSection = () => {
                   </motion.div>
                 ))}
 
+                {/* Values Layer (3rd stage of scroll) */}
                 <motion.div
                   style={{ opacity: valuesOpacity, y: valuesY }}
                   className="absolute inset-0 flex flex-col justify-center"
@@ -107,7 +128,7 @@ const AboutSection = () => {
                 </motion.div>
               </div>
 
-              {/* MOBILE CONTENT (Natural Vertical Flow) */}
+              {/* MOBILE VIEW: Traditional Vertical Layout (No sticky animation) */}
               <div className="lg:hidden space-y-12 relative z-10">
                 {sections.map((section) => (
                   <div key={section.id}>
@@ -132,14 +153,16 @@ const AboutSection = () => {
                 </div>
               </div>
 
-              {/* DESKTOP DOT INDICATORS */}
+              {/* DESKTOP SCROLL INDICATORS (Navigation Dots) */}
               <div className="hidden lg:flex absolute bottom-10 left-1/2 -translate-x-1/2 gap-2">
                 {[0, 1, 2].map((i) => (
                   <motion.div 
                     key={i}
                     className="h-1.5 rounded-full bg-blue-600"
                     style={{ 
+                        // Width grows as that specific slide becomes active
                         width: useTransform(scrollYProgress, [i*0.33, (i+1)*0.33], [10, 30]),
+                        // Dot fades in and out relative to its section segment
                         opacity: useTransform(scrollYProgress, [i*0.33, (i+0.1)*0.33, (i+0.9)*0.33, (i+1)*0.33], [0.3, 1, 1, 0.3])
                     }}
                   />
@@ -149,7 +172,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 3. SUCCESS FORMULA */}
+        {/* SECTION 3: THE SUCCESS FORMULA (GRID CARDS) */}
         <div className="mb-32">
           <Reveal>
             <div className="text-center mb-16">
@@ -183,7 +206,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 4. CERTIFICATES */}
+        {/* SECTION 4: TRUST & CERTIFICATIONS (HCIS & ISO) */}
         <div className="mt-32 pt-24 border-t border-slate-100 dark:border-slate-800">
           <Reveal>
             <div className="text-center mb-24">
@@ -193,7 +216,7 @@ const AboutSection = () => {
           </Reveal>
 
           <div className="space-y-40">
-            {/* HCIS SECTION */}
+            {/* HCIS Approval Display */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <Reveal>
                 <div className="space-y-6">
@@ -210,8 +233,9 @@ const AboutSection = () => {
               </Reveal>
             </div>
 
-            {/* ISO SECTION */}
+            {/* ISO Standards Grid & Display */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Image Section (Reversed Order for Desktop Grid) */}
               <div className="order-2 lg:order-1">
                 <Reveal delay={0.2}>
                     <div className="relative group p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[2.5rem] shadow-2xl overflow-hidden transition-transform duration-700 hover:scale-[1.02]">
@@ -220,6 +244,7 @@ const AboutSection = () => {
                 </Reveal>
               </div>
 
+              {/* ISO List Details */}
               <div className="order-1 lg:order-2 space-y-10">
                 <Reveal>
                   <h4 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">International ISO Standards</h4>

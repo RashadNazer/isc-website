@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { projectData } from '../data/projects';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -7,21 +7,46 @@ import {
   MeshBackground 
 } from "../components/UIComponents";
 
-const categories = ['All', 'Petrochemical Complex', 'Hospital Complex', 'Pipelines', 'Corporate Office', 'Commercial and Industrial Buildings'];
+/**
+ * List of categories for the project filtering system.
+ * These correspond to the "category" field in projectData.
+ */
+const categories = [
+  'All', 
+  'Petrochemical Complex', 
+  'Hospital Complex', 
+  'Pipelines', 
+  'Corporate Office', 
+  'Commercial and Industrial Buildings'
+];
 
 export default function ProjectsPage() {
+  // --- STATE MANAGEMENT ---
+  
+  // 'filter' tracks the currently selected category pill
   const [filter, setFilter] = useState('All');
-  const [visibleCount, setVisibleCount] = useState(6); // Lowered initial count for faster mobile load
+  
+  // 'visibleCount' controls pagination/lazy-loading. 
+  // Initialized to 6 for faster initial mobile rendering.
+  const [visibleCount, setVisibleCount] = useState(6);
 
+  // --- LOGIC & FILTERING ---
+
+  // useMemo ensures we only re-filter the array if 'filter' actually changes,
+  // preventing expensive recalculations on every render.
   const filteredProjects = useMemo(() => {
     return filter === 'All' 
       ? projectData 
       : projectData.filter(p => p.category === filter);
   }, [filter]);
 
+  // Slices the filtered array to show only the number of items allowed by visibleCount
   const displayedProjects = filteredProjects.slice(0, visibleCount);
+  
+  // Helper to determine if the "Load More" button should be rendered
   const hasMore = visibleCount < filteredProjects.length;
 
+  // Configuration for spring-based animations (Filter pill and Card entries)
   const smoothTransition = {
     type: "spring",
     stiffness: 260,
@@ -33,7 +58,7 @@ export default function ProjectsPage() {
     <div className="pt-24 md:pt-32 pb-16 md:pb-24 bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         
-        {/* Header Section */}
+        {/* HEADER SECTION: Standard entry animation from top */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -50,21 +75,23 @@ export default function ProjectsPage() {
           </p>
         </motion.div>
 
-        {/* Improved Floating Filter Bar */}
+        {/* FLOATING FILTER BAR: Uses position: sticky to follow user while scrolling */}
         <div className="sticky top-20 md:top-28 z-40 pb-10 md:pb-12">
           <div className="relative max-w-fit mx-auto"> 
-            {/* Mobile Shadow Masks for Scroll Signaling */}
+            
+            {/* MOBILE SCROLL MASKS: Visual gradients to indicate horizontal scrollability on mobile */}
             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-slate-950 to-transparent z-20 pointer-events-none md:hidden" />
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-slate-950 to-transparent z-20 pointer-events-none md:hidden" />
             
             <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 p-1 rounded-full shadow-lg shadow-slate-200/20 dark:shadow-none">
+              {/* Filter buttons: 'no-scrollbar' utility used for mobile horizontal swipe */}
               <div className="flex flex-nowrap overflow-x-auto md:justify-center gap-1 no-scrollbar px-4 md:px-0">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => {
                       setFilter(cat);
-                      setVisibleCount(6);
+                      setVisibleCount(6); // Reset pagination when filter changes
                     }}
                     className="relative px-4 md:px-6 py-2.5 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-colors whitespace-nowrap active:scale-90"
                   >
@@ -73,6 +100,7 @@ export default function ProjectsPage() {
                     }`}>
                       {cat}
                     </span>
+                    {/* layoutId enables Framer Motion's shared element transition: the pill "slides" between buttons */}
                     {filter === cat && (
                       <motion.div
                         layoutId="activeProjectPill"
@@ -87,8 +115,9 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        {/* Project Grid - Perfect centering on mobile */}
+        {/* PROJECT GRID: Responsive grid layout with layout prop for smooth rearrangement */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 justify-center">
+          {/* AnimatePresence allows elements to animate as they are removed/added to the DOM */}
           <AnimatePresence mode='popLayout'>
             {displayedProjects.map((project, index) => (
               <motion.div 
@@ -97,6 +126,7 @@ export default function ProjectsPage() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
+                // Staggering effect: delay based on index in the current view
                 transition={{ ...smoothTransition, delay: (index % 3) * 0.05 }}
                 className="group bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 dark:border-slate-800/50 hover:border-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-xl dark:hover:shadow-blue-900/10 flex flex-col justify-between min-h-[200px]"
               >
@@ -114,6 +144,7 @@ export default function ProjectsPage() {
                   </h4>
                 </div>
 
+                {/* PROJECT DETAILS FOOTER */}
                 <div className="mt-6 pt-5 border-t border-slate-50 dark:border-slate-800/50 space-y-2">
                    <div className="flex justify-between items-center">
                       <span className="text-slate-400 dark:text-slate-500 text-[10px] uppercase tracking-wider font-bold">Location</span>
@@ -129,7 +160,7 @@ export default function ProjectsPage() {
           </AnimatePresence>
         </motion.div>
 
-        {/* Load More Button - Optimized for touch */}
+        {/* PAGINATION SECTION */}
         <AnimatePresence>
           {hasMore && (
             <motion.div 
@@ -139,7 +170,7 @@ export default function ProjectsPage() {
             >
               <div className="w-full sm:w-auto px-4">
                 <button
-                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  onClick={() => setVisibleCount(prev => prev + 6)} // Increments visible projects by 6
                   className="w-full group flex items-center justify-center gap-3 bg-white dark:bg-slate-900 px-8 py-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold text-sm active:scale-95 transition-all md:hover:bg-blue-600 md:hover:text-white md:hover:border-blue-600"
                 >
                   Load More Projects
@@ -152,7 +183,7 @@ export default function ProjectsPage() {
           )}
         </AnimatePresence>
 
-        {/* Empty State */}
+        {/* ZERO STATE: Rendered when filter returns no matches */}
         {filteredProjects.length === 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
             <p className="text-slate-400 dark:text-slate-600 text-lg font-medium italic">No projects found in this category.</p>

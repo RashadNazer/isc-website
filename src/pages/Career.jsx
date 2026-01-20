@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+// Custom UI components for animations, interactive buttons, and layout
 import { 
   Reveal, 
   MagneticButton, 
@@ -7,12 +8,20 @@ import {
   MeshBackground 
 } from "../components/UIComponents";
 
+/**
+ * STATIC DATA: Job Categories
+ * Simple list of job titles used for the staggered grid section.
+ */
 const jobCategories = [
   "Electronic Systems Engineer", "Sales Representative", "Electronic Technician",
   "Technical Coordinator", "Web Application Developer", "IT and Network Administrator",
   "Graphic Designer", "Document Controller", "Secretary"
 ];
 
+/**
+ * STATIC DATA: Specific Openings
+ * Detailed requirements for priority roles, displayed in card format.
+ */
 const specificPositions = [
   {
     title: "IT Technicians",
@@ -59,7 +68,10 @@ export default function Career() {
   return (
     <div className="bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500 overflow-x-hidden">
       
-      {/* 1. HERO HEADER: Adjusted typography scale */}
+      {/* SECTION 1: HERO HEADER 
+          Purpose: High-impact entry point.
+          Mobile handling: py-20 vs md:py-28 to maintain text vertical centering.
+      */}
       <section className="bg-blue-900 dark:bg-blue-950 py-20 md:py-28 text-white text-center transition-colors relative">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <Reveal>
@@ -73,11 +85,15 @@ export default function Career() {
             </p>
           </Reveal>
         </div>
-        {/* Background Decorative Element */}
+        {/* Decorative mask to add depth to the dark blue background */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
       </section>
 
-      {/* 2. APPLICATION CTA: Boxed Magnetic Link */}
+      {/* SECTION 2: APPLICATION CTA (Call to Action)
+          Purpose: Provide immediate conversion path for job seekers.
+          Animation: Spring-based slide up.
+          Mobile handling: Negative margin (-mt-10) pulls the card up to overlap the hero section.
+      */}
       <section className="max-w-5xl mx-auto px-6 -mt-10 md:-mt-14 relative z-20">
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
@@ -93,6 +109,7 @@ export default function Career() {
           </div>
           
           <Reveal delay={0.5}>
+            {/* MagneticButton creates a subtle 'pull' effect on hover */}
             <MagneticButton>
               <a 
                 href="mailto:jobs@iscksa.com?subject=ref:webvisit" 
@@ -108,7 +125,11 @@ export default function Career() {
         </motion.div>
       </section>
 
-      {/* 3. JOB CATEGORIES: Staggered Entrance */}
+      {/* SECTION 3: JOB CATEGORIES
+          Purpose: Quickly list various departments hiring.
+          Animation: whileInView ensures animation triggers when user scrolls down.
+          Stagger: idx * 0.05 creates a sequential loading effect.
+      */}
       <section className="py-16 md:py-24 max-w-7xl mx-auto px-6">
         <div className="mb-10 text-left">
           <Reveal>
@@ -125,7 +146,7 @@ export default function Career() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
-              whileHover={{ x: 5 }}
+              whileHover={{ x: 5 }} // Slight push to the right on hover
               className="flex items-center gap-4 p-4 md:p-5 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all group"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:scale-150 transition-transform shrink-0" />
@@ -135,7 +156,11 @@ export default function Career() {
         </div>
       </section>
 
-      {/* 4. DETAILED OPENINGS: Premium Spring Cards */}
+      {/* SECTION 4: DETAILED OPENINGS
+          Purpose: Provide detailed qualification lists for primary roles.
+          Style: Premium cards with checklist icons.
+          Mobile handling: grid-cols-1 for vertical stacking on small screens.
+      */}
       <section className="py-16 md:py-24 bg-slate-50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6">
           <Reveal>
@@ -160,6 +185,7 @@ export default function Career() {
                 <ul className="space-y-4">
                   {job.requirements.map((req, i) => (
                     <li key={i} className="flex items-start gap-4 text-slate-600 dark:text-slate-400 text-sm md:text-base">
+                      {/* Custom green checkmark icon wrapper */}
                       <div className="mt-1 shrink-0">
                         <div className="w-5 h-5 rounded-md bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                           <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

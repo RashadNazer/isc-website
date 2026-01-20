@@ -1,20 +1,28 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+/**
+ * SupportSection Component
+ * * Purpose: Displays maintenance contract (MC) information and service request options.
+ * Design: High-contrast dark/blue gradient background with a glassmorphism card system.
+ * Layout: 1-column on mobile/tablet, 2-column grid on large screens (LG).
+ */
 const SupportSection = () => {
   return (
     <section
       id="support"
       className="relative py-16 md:py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white overflow-hidden transition-colors duration-700"
     >
-      {/* Decorative glow */}
+      {/* DECORATIVE BACKGROUND ELEMENTS 
+          Absolute positioned blur circle to add depth and "glow" effect in the corner.
+      */}
       <div className="absolute -bottom-20 -right-20 md:-bottom-40 md:-right-40 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-6">
-        {/* GRID */}
+        {/* Main Grid Container: Switches from vertical stack to side-by-side at 1024px (lg) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* LEFT COLUMN: Text Content & Features */}
+          {/* LEFT COLUMN: Brand messaging and key feature highlights */}
           <div className="space-y-8 md:space-y-12 text-left">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -35,7 +43,7 @@ const SupportSection = () => {
               </p>
             </motion.div>
 
-            {/* Feature Cards Grid */}
+            {/* Sub-grid for internal Feature Cards: Stacks on mobile, 2-columns on tablets (sm) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               {[
                 {
@@ -54,6 +62,7 @@ const SupportSection = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
+                  // Staggered entry animation: delay increases per card index
                   transition={{ delay: 0.2 + (i * 0.1), type: "spring" }}
                   className="p-6 md:p-8 rounded-[2rem] bg-white/5 dark:bg-slate-900/40 border border-white/10 dark:border-slate-800 backdrop-blur-sm"
                 >
@@ -69,7 +78,7 @@ const SupportSection = () => {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Action Cards */}
+          {/* RIGHT COLUMN: Interactive components (Portal Login and SR Form) */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -77,10 +86,13 @@ const SupportSection = () => {
             transition={{ type: "spring", damping: 20 }}
             className="space-y-6"
           >
-            {/* Maintenance Portal Card */}
+            {/* Primary Action Card: Maintenance Portal 
+                Features responsive padding and font-scaling for mobile usability.
+            */}
             <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl border border-transparent dark:border-slate-800">
               <div className="flex flex-wrap items-center gap-3 mb-6">
                 <h4 className="text-2xl md:text-3xl font-black">Maintenance Portal</h4>
+                {/* Status Badge */}
                 <span className="text-[10px] px-2 py-1 rounded-md bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 uppercase tracking-widest font-black">
                   System Update
                 </span>
@@ -91,7 +103,9 @@ const SupportSection = () => {
                 please use the contact information below.
               </p>
 
+              {/* Contact Info Group: Labels stack on extra small mobile screens */}
               <div className="space-y-4 mb-8">
+                {/* Email Entry */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                   <span className="font-bold text-blue-600 dark:text-blue-400 text-xs uppercase tracking-widest">Email:</span>
                   <a
@@ -102,6 +116,7 @@ const SupportSection = () => {
                   </a>
                 </div>
 
+                {/* Fax Entry */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                   <span className="font-bold text-blue-600 dark:text-blue-400 text-xs uppercase tracking-widest">Fax:</span>
                   <span className="font-mono text-slate-700 dark:text-slate-300 text-sm md:text-lg font-bold">
@@ -110,6 +125,7 @@ const SupportSection = () => {
                 </div>
               </div>
 
+              {/* Primary Call-to-Action Button */}
               <a
                 href="https://e-service.iscksa.com/portal/#/mcportal/login/"
                 target="_blank"
@@ -120,7 +136,9 @@ const SupportSection = () => {
               </a>
             </div>
 
-            {/* No Contract Card */}
+            {/* Secondary Card: For users without contracts (Service Request Form)
+                Utilizes hover animations and backdrop-blur for a professional look.
+            */}
             <motion.div 
               whileHover={{ y: -5 }}
               className="p-8 md:p-10 rounded-[2.5rem] bg-white/5 dark:bg-slate-900/30 border border-white/10 dark:border-slate-800 backdrop-blur-md"
@@ -135,6 +153,7 @@ const SupportSection = () => {
                 </span>
               </p>
 
+              {/* Secondary Download Button */}
               <a
                 href="https://www.iscksa.com/documents/SRForm.pdf"
                 target="_blank"

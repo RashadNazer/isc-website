@@ -1,20 +1,30 @@
+/* --- TAILWIND CONFIGURATION --- */
 @import "tailwindcss";
 
-/* Tailwind v4 Dark Mode Strategy */
+/* Tailwind v4 Dark Mode Strategy 
+  Defines how 'dark:' classes are triggered. 
+  This looks for a '.dark' class on the html element or its ancestors.
+*/
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
   html {
+    /* Enables smooth scrolling for anchor links (e.g., #about) */
     scroll-behavior: smooth;
   }
 
-  /* Transition for standard theme switching (fallback) */
+  /* Standard Theme Transition 
+    Provides a smooth fade for browsers that do not support the View Transitions API.
+  */
   html, body {
     transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
   }
 }
 
-/* --- VIEW TRANSITIONS (Circular Reveal) --- */
+/* --- VIEW TRANSITIONS (Circular Reveal Logic) --- */
+/* The View Transitions API captures a "screenshot" of the old state and the new state.
+  We disable the default cross-fade animations to implement our custom circular clip-path in JS.
+*/
 ::view-transition-group(root),
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -22,7 +32,10 @@
   mix-blend-mode: normal !important;
 }
 
-/* Layering logic for the theme reveal */
+/* Layering Logic:
+  Ensures the 'new' theme renders on top of the 'old' theme during the transition 
+  so the expansion (clip-path) is visible.
+*/
 .dark::view-transition-old(root) { z-index: 1; }
 .dark::view-transition-new(root) { z-index: 999; }
 
@@ -31,7 +44,9 @@
 
 /* --- ICON ANIMATIONS --- */
 
-/* Specific Sun Animation */
+/* Sun Icon: 
+  Rotates the icon into view when switching to Light Mode. 
+*/
 .sun-icon {
   animation: sun-spin 0.5s ease-out;
 }
@@ -41,7 +56,9 @@
   to { transform: rotate(0deg); }
 }
 
-/* Specific Moon Animation (Now uniquely named) */
+/* Moon Icon: 
+  Slides and rotates the icon upward when switching to Dark Mode.
+*/
 .animate-moon {
   animation: moon-slide 0.4s ease-out forwards;
 }
@@ -57,16 +74,20 @@
   }
 }
 
-/* --- UTILITIES --- */
+/* --- CUSTOM UTILITIES --- */
 @layer utilities {
+  /* Utility to ensure animations stay at their final state after finishing */
   .fill-mode-both {
     animation-fill-mode: both;
   }
   
-  /* Use this for your Mission/Vision boxes if you want a custom feel */
+  /* Tab Reveal Animation:
+    Used for Mission/Vision/Values sections to create a subtle "pop-in" effect 
+    using a hardware-accelerated cubic-bezier curve.
+  */
   .animate-tab-content {
     animation: tab-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    backface-visibility: hidden; /* Prevents jitter */
+    backface-visibility: hidden; /* Fixes sub-pixel jittering in some browsers */
   }
 }
 

@@ -10,23 +10,33 @@ import {
 } from "../../components/UIComponents";
 
 const CustomerSection = () => {
+  // Limit the display to the first 6 clients for the homepage preview
   const previewClients = customerData?.slice(0, 6) || [];
 
+  /**
+   * Framer Motion: Parent Container Variants
+   * Handles the "staggering" effect so logos appear one after another
+   */
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1, // Faster stagger for mobile snappiness
-        delayChildren: 0.1,
+        staggerChildren: 0.1, // Time between each child animation
+        delayChildren: 0.1,   // Initial delay before first child starts
       },
     },
   };
 
+  /**
+   * Framer Motion: Individual Logo Variants
+   * Uses 'y' (vertical) instead of 'x' (horizontal) to avoid 
+   * horizontal scrollbar issues on mobile devices during entry.
+   */
   const logoVariants = {
     hidden: { 
       opacity: 0, 
-      y: 20, // Vertical slide is safer than horizontal for mobile overflow
+      y: 20, 
       filter: "blur(4px)" 
     },
     visible: { 
@@ -46,7 +56,10 @@ const CustomerSection = () => {
       <section id="customers-preview" className="py-12 md:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           
-          {/* STATS OVERVIEW - Adjusted for small screens */}
+          {/* STATS OVERVIEW 
+              grid-cols-2: Ensures two items per row on mobile to prevent overlapping text.
+              gap-y-10: Provides vertical breathing room when stacked.
+          */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-4 mb-12 md:mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
             <StatCounter value={40} suffix="+" label="Years Experience" />
             <StatCounter value={150} suffix="+" label="Clients Served" />
@@ -54,7 +67,10 @@ const CustomerSection = () => {
             <StatCounter value={24} suffix="/7" label="Support Team" />
           </div>
 
-          {/* HEADER SECTION - Stacked on mobile, side-by-side on desktop */}
+          {/* HEADER SECTION 
+              flex-col: Stacks title and button on mobile.
+              lg:flex-row: Aligns them side-by-side on larger screens.
+          */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 md:mb-16 gap-8">
             <Reveal>
               <div className="text-left">
@@ -71,7 +87,7 @@ const CustomerSection = () => {
             </Reveal>
 
             <Reveal delay={0.2}>
-              {/* Magnetic effect disabled via CSS on mobile, handled by component */}
+              {/* w-full: Makes the button full-width on mobile for better thumb-reach */}
               <div className="w-full sm:w-auto">
                 <Link
                   to="/customers"
@@ -86,45 +102,48 @@ const CustomerSection = () => {
             </Reveal>
           </div>
 
-          {/* ANIMATED LOGO GRID */}
-<motion.div 
-  variants={containerVariants}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true, margin: "-50px" }}
-  /* Added 'justify-center' and 'justify-items-center' 
-     to ensure logos are centered even if the last row is incomplete 
-  */
-  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5 justify-items-center"
->
-  {previewClients.map((client) => (
-    <motion.div 
-      key={client.id} 
-      variants={logoVariants}
-      className="w-full" // Ensures the motion wrapper fills the grid cell
-    >
-      <a
-        href={client.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        /* Added 'mx-auto' and ensured 'w-full' for responsive centering 
-        */
-        className="group relative h-24 md:h-32 w-full max-w-[180px] md:max-w-none mx-auto bg-white p-4 md:p-5 rounded-xl md:rounded-2xl border border-slate-100 dark:border-white/10
-                   flex items-center justify-center transition-all duration-500
-                   hover:shadow-lg dark:hover:shadow-blue-500/10 active:scale-95 overflow-hidden"
-      >
-        <img
-          src={client.logo}
-          alt={client.name}
-          className="h-7 md:h-10 w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500"
-        />
-        
-        {/* Subtle shine effect */}
-        <div className="hidden md:block absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-      </a>
-    </motion.div>
-  ))}
-</motion.div>
+          {/* ANIMATED LOGO GRID 
+              justify-items-center: Centers logos within their grid cells.
+              grid-cols-2: Compact layout for mobile.
+              lg:grid-cols-6: Wide layout for desktop.
+          */}
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-5 justify-items-center"
+          >
+            {previewClients.map((client) => (
+              <motion.div 
+                key={client.id} 
+                variants={logoVariants}
+                className="w-full" 
+              >
+                <a
+                  href={client.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  /* max-w-[180px]: Prevents logos from stretching too wide on large mobile screens.
+                     mx-auto: Centers the card container.
+                     active:scale-95: Provides tactile "press" feedback for mobile users.
+                  */
+                  className="group relative h-24 md:h-32 w-full max-w-[180px] md:max-w-none mx-auto bg-white p-4 md:p-5 rounded-xl md:rounded-2xl border border-slate-100 dark:border-white/10
+                             flex items-center justify-center transition-all duration-500
+                             hover:shadow-lg dark:hover:shadow-blue-500/10 active:scale-95 overflow-hidden"
+                >
+                  <img
+                    src={client.logo}
+                    alt={client.name}
+                    className="h-7 md:h-10 w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
+                  
+                  {/* Shine effect: Hidden on mobile (hidden md:block) to optimize performance */}
+                  <div className="hidden md:block absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </a>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </MeshBackground>

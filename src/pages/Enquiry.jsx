@@ -7,19 +7,26 @@ import {
   MeshBackground 
 } from "../components/UIComponents"; 
 
+/** * Predefined list of enquiry types for the dropdown menu 
+ */
 const enquiryTypes = [
   "In-Hand", "Bidding", "Budgetary In-Hand", "Budgetary Bidding",
   "Change Order", "Upgrade", "Repair/Fix", "Replace",
 ];
 
 const Enquiry = () => {
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [countdown, setCountdown] = useState(15); // 15s to allow time for PDF saving
-  const [refNumber, setRefNumber] = useState(null);
-  const navigate = useNavigate();
+  // --- STATE MANAGEMENT ---
+  const [submitted, setSubmitted] = useState(false); // Tracks if the form has been successfully sent
+  const [formData, setFormData] = useState({});      // Stores all user input values
+  const [countdown, setCountdown] = useState(15);    // Timer for auto-redirecting back to home
+  const [refNumber, setRefNumber] = useState(null);  // Unique 5-digit ID for the request
+  const navigate = useNavigate();                   // Hook for programmatic navigation
 
-  // Auto-redirect logic
+  /**
+   * EFFECT: Auto-redirect logic
+   * Once 'submitted' is true, it starts a 1-second interval timer.
+   * When countdown hits 0, the user is sent back to the homepage.
+   */
   useEffect(() => {
     let timer;
     if (submitted && countdown > 0) {
@@ -29,38 +36,53 @@ const Enquiry = () => {
     } else if (submitted && countdown === 0) {
       navigate("/");
     }
+    // Cleanup interval on component unmount or state change
     return () => clearInterval(timer);
   }, [submitted, countdown, navigate]);
 
+  /**
+   * Update the formData state object whenever an input changes
+   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  /**
+   * Handle form submission
+   * 1. Prevents default page reload
+   * 2. Generates a random 5-digit Reference Number
+   * 3. Triggers the success view (submitted = true)
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lock the reference number once on submit
     const generatedRef = Math.floor(Math.random() * 90000) + 10000;
     setRefNumber(generatedRef);
     setSubmitted(true);
   };
 
+  /**
+   * Triggers the browser's native print dialog.
+   * Combined with 'print:' Tailwind classes, this creates a PDF-friendly layout.
+   */
   const handlePrint = () => {
     window.print();
   };
 
+  // --- REUSABLE STYLES ---
   const inputStyles = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 px-4 py-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-800 outline-none transition-all duration-300";
   const labelStyles = "text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] ml-1 mb-2 block";
 
   return (
     <section className="relative py-20 md:py-32 bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden print:bg-white print:py-10">
-      {/* Background hidden during print */}
+      
+      {/* Visual background element - hidden when printing to save ink/PDF clarity */}
       <div className="absolute inset-0 opacity-40 pointer-events-none print:hidden">
         <MeshBackground />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         
-        {/* Header - Hidden after submission for a clean PDF look */}
+        {/* Only show the header if the form hasn't been submitted yet */}
         {!submitted && (
           <div className="mb-16 text-center print:hidden">
             <Reveal>
@@ -79,13 +101,14 @@ const Enquiry = () => {
 
         <AnimatePresence mode="wait">
           {submitted ? (
+            /* --- SUCCESS VIEW (Post-Submission) --- */
             <motion.div 
               key="success"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-900/30 rounded-[3rem] p-12 md:p-16 text-center shadow-2xl print:shadow-none print:border-none print:p-0"
             >
-              {/* Icon - Hidden on print */}
+              {/* Success Checkmark Icon */}
               <div className="relative w-20 h-20 mx-auto mb-8 print:hidden">
                 <div className="absolute inset-0 bg-blue-600 rounded-3xl rotate-3 shadow-lg shadow-blue-600/30"></div>
                 <div className="relative z-10 w-full h-full bg-blue-600 rounded-3xl flex items-center justify-center text-white">
@@ -102,7 +125,7 @@ const Enquiry = () => {
                 Reference: <span className="font-mono text-blue-600 font-bold text-xl">#{refNumber}</span>
               </p>
 
-              {/* Action Buttons - Hidden on print */}
+              {/* Action Buttons: Save PDF or Go Home */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 print:hidden">
                 <MagneticButton>
                   <button
@@ -126,17 +149,19 @@ const Enquiry = () => {
                 </MagneticButton>
               </div>
 
+              {/* Countdown text shown only on screen */}
               <p className="mt-10 text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest print:hidden">
                 Auto-redirecting in <span className="text-blue-600 dark:text-blue-400 font-black">{countdown}s</span>
               </p>
             </motion.div>
           ) : (
+            /* --- FORM VIEW (Initial State) --- */
             <Reveal delay={0.2}>
               <form
                 onSubmit={handleSubmit}
                 className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[3rem] p-8 md:p-14 border border-slate-200/50 dark:border-slate-800/50 shadow-2xl space-y-8"
               >
-                {/* Section 1: Project Scope */}
+                {/* SECTION 1: PROJECT SCOPE */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -163,7 +188,7 @@ const Enquiry = () => {
                   </div>
                 </div>
 
-                {/* Section 2: Logistics */}
+                {/* SECTION 2: LOGISTICS */}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -181,7 +206,7 @@ const Enquiry = () => {
                   </div>
                 </div>
 
-                {/* Section 3: Contact Person */}
+                {/* SECTION 3: CONTACT PERSON */}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -195,6 +220,7 @@ const Enquiry = () => {
                   </div>
                 </div>
 
+                {/* SUBMIT BUTTON */}
                 <div className="pt-10 flex justify-center">
                   <MagneticButton>
                     <button

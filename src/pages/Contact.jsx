@@ -11,9 +11,13 @@ export default function Contact() {
   return (
     <div className="bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500">
       
-      {/* Header Section */}
+      {/* HERO / HEADER SECTION 
+          Purpose: Sets the context of the page with the primary location (Al-Khobar).
+          Styling: Uses a subtle background tint (slate-50) and scaled typography for mobile vs desktop.
+      */}
       <section className="bg-slate-50 dark:bg-slate-900/50 pt-24 md:pt-32 pb-16 md:pb-20 border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-6 text-left lg:text-center">
+          {/* Motion div handles the initial fade-in and slide-up of the header text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -33,15 +37,22 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Main Contact Grid */}
+      {/* MAIN CONTACT GRID 
+          Purpose: Organizes physical addresses, logistics, and department-specific contact info.
+      */}
       <section className="py-12 md:py-20 max-w-7xl mx-auto px-6">
         
-        {/* ROW 1: Address & Logistics (Equal Height) */}
+        {/* ROW 1: ADDRESS & LOGISTICS 
+            Layout: Stacked on mobile, side-by-side (2 cols) on Large screens.
+            Note: "h-full" on Reveal and child ensures both cards stretch to match the tallest content.
+        */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
           
+          {/* National Address Card */}
           <Reveal delay={0.1} className="h-full">
             <div className="h-full bg-white dark:bg-slate-900 p-7 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 group">
               <div className="flex flex-col sm:flex-row items-start gap-6">
+                {/* Icon Container with hover animation */}
                 <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -64,6 +75,7 @@ export default function Contact() {
             </div>
           </Reveal>
 
+          {/* Logistics Center Card */}
           <Reveal delay={0.2} className="h-full">
             <div className="h-full bg-slate-100/50 dark:bg-slate-900/50 p-7 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-300 group">
               <div className="flex flex-col sm:flex-row items-start gap-6">
@@ -87,9 +99,12 @@ export default function Contact() {
           </Reveal>
         </div>
 
-        {/* ROW 2: Sales & Support (Equal Height) */}
+        {/* ROW 2: SALES & SUPPORT 
+            Layout: Changes to 2 cols starting at 'md' breakpoint.
+        */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-20">
           
+          {/* Corporate HQ & Sales Information */}
           <Reveal delay={0.3} className="h-full">
             <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
               <h3 className="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3">
@@ -110,6 +125,7 @@ export default function Contact() {
             </div>
           </Reveal>
 
+          {/* Projects & Service Support Lines */}
           <Reveal delay={0.4} className="h-full">
             <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
               <h3 className="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3">
@@ -136,16 +152,21 @@ export default function Contact() {
           </Reveal>
         </div>
 
-        {/* e-Service Portal Section: RESTORED */}
+        {/* E-SERVICE PORTAL SECTION 
+            Purpose: High-impact CTA for existing clients with maintenance contracts.
+            Visuals: Uses a background blur glow and glassmorphism cards for a "tech-forward" feel.
+        */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           className="bg-slate-900 dark:bg-slate-900/40 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 text-white relative overflow-hidden border border-white/5 shadow-2xl"
         >
+          {/* Decorative Glow background effect */}
           <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-blue-600/10 dark:bg-blue-400/5 blur-[120px] pointer-events-none"></div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+            {/* Left Column: Portal Information */}
             <div className="text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase tracking-widest mb-8">
                 <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
@@ -157,6 +178,7 @@ export default function Contact() {
                 enable real-time digital fault reporting and system monitoring.
               </p>
               
+              {/* Feature Highlights with backdrop blur cards */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-5 rounded-2xl flex-1 backdrop-blur-md">
                   <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg shadow-lg">1</div>
@@ -169,6 +191,7 @@ export default function Contact() {
               </div>
             </div>
 
+            {/* Right Column: Portal Login Box */}
             <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-sm">
                 <h4 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">Access Your Dashboard</h4>
                 <a 

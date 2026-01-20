@@ -14,7 +14,6 @@ const ServicesSection = () => {
   const scaleY = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // We use a small threshold (0.99) to prevent jumping to the next section at the very end
     const index = Math.min(
       Math.floor(latest * serviceData.length),
       serviceData.length - 1
@@ -24,18 +23,10 @@ const ServicesSection = () => {
 
   const scrollToService = (index) => {
     if (!containerRef.current) return;
-
-    // 1. Get the absolute distance of this section from the top of the page
     const rect = containerRef.current.getBoundingClientRect();
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const sectionTop = rect.top + scrollTop;
-
-    // 2. Calculate the height of one "service block" 
-    // Since the section is (length * 100vh), one block is exactly window.innerHeight
     const blockSize = window.innerHeight;
-
-    // 3. Target the exact pixel
-    // We add a +10px buffer to ensure the scroll lands inside the trigger zone
     const targetScroll = sectionTop + (index * blockSize) + 10;
 
     window.scrollTo({
@@ -50,27 +41,29 @@ const ServicesSection = () => {
     <section 
       ref={containerRef} 
       className="relative bg-slate-50 dark:bg-slate-950 transition-colors duration-500"
-      style={{ height: `${serviceData.length * 100}vh` }}
+      // MOBILE: Auto height | DESKTOP: Multi-viewport height
+      style={{ height: typeof window !== 'undefined' && window.innerWidth < 1024 ? 'auto' : `${serviceData.length * 100}vh` }}
     >
-      <div className="sticky top-0 h-screen w-full flex items-center overflow-hidden">
+      {/* MOBILE: relative (scrolls naturally) 
+          DESKTOP: sticky (stays pinned while scrolling)
+      */}
+      <div className="relative lg:sticky lg:top-0 lg:h-screen w-full flex items-center py-16 lg:py-0 overflow-hidden">
         
-        {/* Decorative Background */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-blue-600/5 blur-[80px] md:blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 w-full">
           
-          <div className="mb-10">
+          <div className="mb-8 lg:mb-12">
             <h2 className="text-blue-600 font-bold text-xs uppercase tracking-[0.3em] mb-2">Capabilities</h2>
-            <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white">Our Services</h3>
-            {/* Normal spacing and alignment */}
-          <p className="mt-6 text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed">
-            Comprehensive engineering and system integration services designed
-            to deliver reliability, performance, and long-term industrial value.
-          </p>
+            <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">Our Services</h3>
+            <p className="mt-4 lg:mt-6 text-slate-600 dark:text-slate-400 text-base md:text-xl leading-relaxed max-w-2xl">
+              Comprehensive engineering and system integration services designed
+              to deliver reliability and long-term industrial value.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
+          {/* DESKTOP LAYOUT (Hidden on Mobile) */}
+          <div className="hidden lg:grid grid-cols-12 gap-12 items-center">
             {/* LEFT NAV */}
             <div className="lg:col-span-5 relative z-10">
               <div className="space-y-1 relative">
@@ -101,12 +94,10 @@ const ServicesSection = () => {
 
             {/* RIGHT DISPLAY CARD */}
             <div className="lg:col-span-7">
-              <div className="relative bg-white dark:bg-slate-900/60 backdrop-blur-xl p-8 md:p-14 rounded-[2.5rem] shadow-xl border border-slate-200 dark:border-white/5 min-h-[480px] flex flex-col justify-center">
-                
+              <div className="relative bg-white dark:bg-slate-900/60 backdrop-blur-xl p-14 rounded-[2.5rem] shadow-xl border border-slate-200 dark:border-white/5 min-h-[480px] flex flex-col justify-center overflow-hidden">
                 <div className="absolute -right-4 -bottom-4 text-[15rem] font-black text-slate-100 dark:text-slate-800/10 select-none pointer-events-none">
                   {activeIndex + 1}
                 </div>
-
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeIndex}
@@ -116,18 +107,44 @@ const ServicesSection = () => {
                     transition={{ duration: 0.4 }}
                     className="relative z-10"
                   >
-                    <h4 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6">
+                    <h4 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
                       {serviceData[activeIndex].title}
                     </h4>
-                    <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-300 text-lg md:text-xl leading-relaxed">
                       {serviceData[activeIndex].content}
                     </p>
                   </motion.div>
                 </AnimatePresence>
               </div>
             </div>
-
           </div>
+
+          {/* MOBILE LAYOUT (Hidden on Desktop) */}
+          <div className="lg:hidden flex flex-col gap-6">
+            {serviceData.map((service, i) => (
+              <motion.div 
+                key={service.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                className="relative bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+              >
+                <div className="absolute -right-2 -bottom-6 text-8xl font-black text-slate-50 dark:text-slate-800/20 select-none pointer-events-none">
+                  {i + 1}
+                </div>
+                <div className="relative z-10">
+                    <div className="text-blue-600 font-bold text-sm mb-2">0{i + 1}</div>
+                    <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
+                        {service.title}
+                    </h4>
+                    <p className="text-slate-600 dark:text-slate-400 text-base leading-relaxed">
+                        {service.content}
+                    </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
         </div>
       </div>
     </section>

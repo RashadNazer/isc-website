@@ -16,22 +16,10 @@ export default function Layout({ children }) {
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  const scrollValue = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   const slowEase = "duration-1000 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]";
 
-  const dotLinks = useMemo(() => [
-    { name: 'About Us', path: 'about' },
-    { name: 'Services', path: 'services' },
-    { name: 'Solutions', path: 'solutions' },
-    { name: 'Support', path: 'support' },
-    { name: 'Our Clients', path: 'customers-preview' },
-    { name: 'Projects', path: 'projects' },
-    { name: 'Products', path: 'products' },
-    { name: 'Request Quote', path: 'request-quote-cta' },
-  ], []);
-
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { name: 'About Us', path: 'about' },
     { name: 'Services', path: 'services' },
     { name: 'Solutions', path: 'solutions' },
@@ -40,7 +28,7 @@ export default function Layout({ children }) {
     { name: 'Projects', path: 'projects' },
     { name: 'Products', path: 'products' },
     { name: 'Career', path: '/career', type: 'route' },
-  ];
+  ], []);
 
   // 1. Theme Logic
   useEffect(() => {
@@ -48,6 +36,74 @@ export default function Layout({ children }) {
     theme === 'dark' ? root.classList.add('dark') : root.classList.remove('dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // 2. Lock Body Scroll
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isMenuOpen]);
+
+  // 3. Observer & Scroll Handling
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      const shouldBeScrolled = currentScroll > 60;
+      if (shouldBeScrolled !== isScrolled) {
+        setIsScrolled(shouldBeScrolled);
+        if (window.AOS) {
+          setTimeout(() => window.AOS.refresh(), 100);
+        }
+      }
+      setShowBackToTop(currentScroll > 400);
+      if (currentScroll < 100) setActiveSection(navLinks[0].path);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-25% 0px -65% 0px', threshold: 0 }
+    );
+
+    if (pathname === '/') {
+      navLinks.forEach(link => {
+        if (link.type !== 'route') {
+          const el = document.getElementById(link.path);
+          if (el) observer.observe(el);
+        }
+      });
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
+  }, [navLinks, pathname, isScrolled]);
+
+  const handleScrollLink = (e, id) => {
+    setIsMenuOpen(false);
+    if (id.startsWith('/')) return;
+
+    if (pathname === '/') {
+      e.preventDefault();
+      if (id === 'top' || id === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const target = document.getElementById(id);
+      if (target) {
+        const headerOffset = 110; 
+        const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: elementPosition - headerOffset, behavior: 'smooth' });
+      }
+    } else {
+      e.preventDefault();
+      navigate(id === 'top' ? '/' : `/#${id}`);
+    }
+  };
 
   const toggleTheme = (event) => {
     if (!document.startViewTransition) {
@@ -67,192 +123,108 @@ export default function Layout({ children }) {
     });
   };
 
-  // 2. Global Scroll & Intersection Observer Logic
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      setIsScrolled(currentScroll > 60); 
-      setShowBackToTop(currentScroll > 400);
-      if (currentScroll < 100) setActiveSection(dotLinks[0].path);
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { 
-        rootMargin: '-20% 0px -70% 0px', 
-        threshold: 0 
-      }
-    );
-
-    if (pathname === '/') {
-      dotLinks.forEach(link => {
-        const el = document.getElementById(link.path);
-        if (el) observer.observe(el);
-      });
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      observer.disconnect();
-    };
-  }, [dotLinks, pathname]);
-
-  // 3. Centralized Smooth Scroll Handler
-  const handleScrollLink = (e, id) => {
-    setIsMenuOpen(false);
-    
-    // Check if it's an internal route first
-    if (id.startsWith('/')) return;
-
-    if (pathname === '/') {
-      e.preventDefault();
-      
-      if (id === 'top' || id === 'home') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
-
-      const target = document.getElementById(id);
-      if (target) {
-        const headerOffset = 90; // Adjusts for the sticky header height
-        const elementPosition = target.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    } else {
-      // If navigating from another page, go home and append hash
-      e.preventDefault();
-      navigate(id === 'top' ? '/' : `/#${id}`);
-    }
-  };
-
-  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
-
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-700">
       
-      {/* Spacer to prevent content jump under fixed nav */}
-      <div className={`transition-all ${slowEase} ${isScrolled ? 'h-24' : 'h-64 md:h-80'}`} />
-
       {/* Navigation */}
-      <nav className={`fixed top-0 left-0 w-full z-[100] border-b transition-all ${slowEase} ${isScrolled ? 'h-24 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md shadow-md border-slate-200 dark:border-slate-800' : 'h-64 md:h-80 bg-white dark:bg-slate-950 shadow-none border-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 h-full relative">
+      <nav className={`fixed top-0 left-0 w-full z-[100] border-b transition-all ${slowEase} ${
+        isScrolled 
+          ? 'h-24 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md shadow-md border-slate-200 dark:border-slate-800' 
+          : 'h-64 md:h-80 bg-white dark:bg-slate-950 border-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-full relative">
           
-          {/* Logo Group */}
-          <div className={`absolute transition-all ${slowEase} flex items-center z-[110] ${isScrolled ? 'left-6 top-1/2 -translate-y-1/2 translate-x-0 scale-100' : 'left-1/2 top-8 md:top-12 -translate-x-1/2 scale-125 md:scale-150'}`}>
-            <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-3 md:gap-5">
-              <img src={logo} alt="ISC" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-12' : 'h-20 md:h-28'} dark:brightness-125`} />
-              <div className={`bg-blue-900 rounded-lg flex items-center shadow-lg transition-all ${slowEase} ${isScrolled ? 'px-4 py-2' : 'px-6 py-3 md:px-8 md:py-5 md:rounded-2xl'}`}>
-                <img src={footerLogo} alt="Wordmark" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-6 md:h-7' : 'h-10 md:h-14'}`} />
+          <div className={`absolute transition-all ${slowEase} flex items-center z-[110] 
+            ${isScrolled 
+              ? 'left-4 md:left-6 top-1/2 -translate-y-1/2 scale-100' 
+              : 'left-1/2 top-1/2 -translate-y-2/3 -translate-x-1/2 scale-110 md:scale-150'
+            }`}
+          >
+            <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
+              <img src={logo} alt="ISC" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-10 md:h-12' : 'h-20 md:h-24'} dark:brightness-125`} />
+              <div className={`bg-blue-900 rounded-lg flex items-center shadow-lg transition-all ${slowEase} ${isScrolled ? 'px-3 py-1.5' : 'px-5 py-2.5 md:px-8 md:py-5'}`}>
+                <img src={footerLogo} alt="Wordmark" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-5 md:h-6' : 'h-8 md:h-14'}`} />
               </div>
             </Link>
           </div>
 
-          {/* Nav Links */}
-          <div className={`absolute transition-all ${slowEase} flex items-center ${isScrolled ? 'right-6 top-1/2 -translate-y-1/2 translate-x-0 w-auto' : 'left-0 bottom-10 w-full justify-center px-6'}`}>
-            <div className={`hidden lg:flex items-center transition-all ${slowEase} ${isScrolled ? 'gap-x-4 xl:gap-x-6' : 'gap-x-8 xl:gap-x-10'}`}>
+          <div className="flex items-center justify-between w-full h-full relative">
+            <div className={`hidden lg:flex items-center transition-all ${slowEase} 
+              ${isScrolled 
+                ? 'ml-auto gap-x-3 xl:gap-x-5' 
+                : 'absolute bottom-8 left-1/2 -translate-x-1/2 gap-x-6 xl:gap-x-8'
+              }`}
+            >
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
                   to={link.type === 'route' ? link.path : '#'} 
                   onClick={link.type !== 'route' ? (e) => handleScrollLink(e, link.path) : undefined} 
-                  className={`font-bold text-slate-600 dark:text-slate-300 hover:text-blue-900 dark:hover:text-blue-400 uppercase tracking-widest whitespace-nowrap transition-all ${slowEase} ${isScrolled ? 'text-[11px]' : 'text-[13px]'}`}
+                  className={`font-bold uppercase tracking-widest text-[11px] whitespace-nowrap transition-colors ${
+                    activeSection === link.path ? 'text-blue-900 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300 hover:text-blue-900'
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }} className="ml-12">
-                <Link to="/contact" className={`bg-blue-900 text-white rounded-lg font-bold uppercase tracking-widest shadow-md hover:bg-blue-800 transition-all ${slowEase} whitespace-nowrap block ${isScrolled ? 'px-5 py-2.5 text-[11px]' : 'px-7 py-3.5 text-[13px]'}`}>
+              
+              <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 2, repeat: Infinity }} className="flex-shrink-0">
+                <Link to="/contact" className="bg-blue-900 text-white px-5 py-2.5 rounded-lg font-bold uppercase tracking-widest text-[11px] hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 whitespace-nowrap block">
                   Contact Us
                 </Link>
               </motion.div>
+
+              <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400">
+                {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+              </button>
             </div>
 
-            {/* Theme & Mobile Toggle */}
-            <div className={`flex items-center gap-4 ml-6 transition-all ${slowEase} ${!isScrolled && 'lg:absolute lg:right-6'}`}>
-              <button onClick={(e) => toggleTheme(e)} className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:ring-2 ring-blue-500 transition-all overflow-hidden flex-shrink-0">
-                {theme === 'light' ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><circle cx="12" cy="12" r="4" fill="currentColor" /><g stroke="currentColor"><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></g></svg>
-                )}
-              </button>
-              <button className="lg:hidden p-2 text-blue-900 dark:text-blue-400" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">{isMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />}</svg>
-              </button>
+            <div className={`lg:hidden flex items-center gap-2 ml-auto z-[120] transition-all ${slowEase} ${!isScrolled ? 'absolute top-6 right-4' : ''}`}>
+              <button onClick={toggleTheme} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400"><MoonIcon /></button>
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-blue-900 dark:text-blue-400"><MenuIcon /></button>
             </div>
           </div>
         </div>
-        {/* Top Progress Bar */}
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600 dark:bg-blue-400 origin-[0%] z-[110]" style={{ scaleX }} />
       </nav>
 
-      {/* Floating Dot Navigation - Visible only on Home */}
-{pathname === '/' && (
-  <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-6 items-end group">
-    {dotLinks.map((link) => {
-      const isActive = activeSection === link.path;
-      return (
-        <button 
-          key={link.path} 
-          onClick={(e) => handleScrollLink(e, link.path)} 
-          className="flex items-center gap-4 group/item relative"
-        >
-          {/* Tooltip Label - Dark text for Light sections, White text for Dark sections */}
-          <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 whitespace-nowrap
-            px-2 py-1 rounded
-            ${isActive 
-              ? 'text-blue-900 dark:text-blue-400' 
-              : 'text-slate-600 dark:text-slate-300'
-            }`}
-          >
-            {link.name}
-          </span>
+      {/* Main Content Spacer */}
+      <div className="h-64 md:h-80 w-full flex-shrink-0" /> 
+      
+      {/* MODIFIED: Removed overflow-x-hidden to allow children to use position: sticky */}
+      <main className="flex-grow w-full relative">
+        {children}
+      </main>
 
-          {/* The Dot - Solid colors for guaranteed visibility */}
-          <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 border-2 
-            ${isActive 
-              ? 'bg-blue-600 border-blue-600 scale-150 shadow-[0_0_10px_rgba(37,99,235,0.4)]' 
-              : 'bg-slate-200 dark:bg-slate-800 border-slate-400 dark:border-slate-500 group-hover:border-blue-500'
-            }`}
-          />
-        </button>
-      );
-    })}
-  </aside>
-)}
+      {/* Side Dots */}
+      {pathname === '/' && (
+        <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-6 items-end group">
+          {navLinks.filter(l => l.type !== 'route').map((link) => (
+            <button key={link.path} onClick={(e) => handleScrollLink(e, link.path)} className="flex items-center gap-4 group/item relative">
+              <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 whitespace-nowrap px-2 py-1 ${activeSection === link.path ? 'text-blue-900 dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}`}>
+                {link.name}
+              </span>
+              <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 border-2 ${activeSection === link.path ? 'bg-blue-600 border-blue-600 scale-150 shadow-[0_0_10px_rgba(37,99,235,0.4)]' : 'bg-slate-200 dark:bg-slate-800 border-slate-400 dark:border-slate-500'}`} />
+            </button>
+          ))}
+        </aside>
+      )}
 
-      <main className="flex-grow">{children}</main>
-
-      {/* Back to Top Button */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {showBackToTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.5, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.5, y: 20 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-10 right-10 z-[200] p-4 bg-blue-900 dark:bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-800 transition-all group"
-          >
-            <svg className="absolute inset-0 w-full h-full -rotate-90">
-              <motion.circle cx="50%" cy="50%" r="26" fill="transparent" strokeWidth="3" stroke="rgba(255,255,255,0.2)" />
-              <motion.circle cx="50%" cy="50%" r="26" fill="transparent" strokeWidth="3" stroke="white" style={{ pathLength: scrollValue }} />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 relative z-10 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-          </motion.button>
+        {isMenuOpen && (
+          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'tween', duration: 0.4 }} className="fixed inset-0 z-[200] bg-white dark:bg-slate-950 flex flex-col p-6 pt-24 overflow-y-auto">
+            <div className="flex justify-between items-center mb-10 flex-shrink-0">
+              <img src={logo} className="h-8 dark:brightness-125" alt="Logo" />
+              <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white"><CloseIcon /></button>
+            </div>
+            <div className="flex flex-col gap-6 text-center pb-10">
+              {navLinks.map((link) => (
+                <Link key={link.name} to={link.type === 'route' ? link.path : '#'} onClick={(e) => handleScrollLink(e, link.path)} className="text-2xl font-bold dark:text-white uppercase tracking-tight border-b border-slate-100 dark:border-slate-800 pb-3">{link.name}</Link>
+              ))}
+              <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="mt-4 bg-blue-900 text-white text-center py-4 rounded-xl font-bold uppercase tracking-widest whitespace-nowrap">Contact Us</Link>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -260,3 +232,10 @@ export default function Layout({ children }) {
     </div>
   );
 }
+
+// Icons (Sun, Moon, Menu, Close) omitted for brevity but should remain as in your code
+
+const SunIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><circle cx="12" cy="12" r="4" fill="currentColor" /><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>;
+const MoonIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>;
+const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8"><path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>;
+const CloseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6"><path d="M6 18L18 6M6 6l12 12" /></svg>;

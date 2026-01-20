@@ -1,20 +1,17 @@
 import React, { useRef } from "react";
 import { stats, aboutValues, certs } from "../../data/homeData"; 
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal, StatCounter } from "../../components/UIComponents";
 
 const AboutSection = () => {
   const containerRef = useRef(null);
-  const formulaRef = useRef(null);
   
-  // 1. Scroll Logic for the Sticky Mission/Vision/Values Section
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  // Opacity & Y mapping for the three states
-  // Mission: 0 -> 0.33 | Vision: 0.33 -> 0.66 | Values: 0.66 -> 1
+  // Desktop Animation Transforms
   const missionOpacity = useTransform(scrollYProgress, [0, 0.25, 0.33], [1, 1, 0]);
   const missionY = useTransform(scrollYProgress, [0, 0.33], [0, -40]);
 
@@ -45,13 +42,14 @@ const AboutSection = () => {
 
   return (
     <section id="about" className="relative bg-white dark:bg-slate-950 transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-6 py-20 md:py-32">
+      <div className="max-w-7xl mx-auto px-6 py-16 md:py-32">
         
         {/* 1. WHO WE ARE & STATS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-24 items-center mb-20 md:mb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-24 items-center mb-16 md:mb-32">
             <Reveal>
-              <h3 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6">
-                Designed for Today, <span className="text-blue-600">Ready for Tomorrow.</span>
+              <h3 className="text-3xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+                Designed for Today, <br className="hidden md:block" />
+                <span className="text-blue-600">Ready for Tomorrow.</span>
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed text-justify">
                 At <span className="font-bold text-slate-900 dark:text-slate-100">ISC</span>, we continue to adapt state-of-the-art technology, methodology, and practices, helping project owners by designing and maintaining <span className="font-semibold text-blue-900 dark:text-blue-300">Low Current Systems</span>.
@@ -59,11 +57,10 @@ const AboutSection = () => {
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed text-justify">
                 As a leader with <span className="text-blue-700 dark:text-blue-400 font-bold text-xl">40+ years</span> of rich experience in Saudi Arabia, we provide reliable systems and safe environments that empower infrastructure across the Kingdom.
               </p>
-              
             </Reveal>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
                {stats.map((stat, i) => (
-                 <div key={i} className="p-8 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800">
+                 <div key={i} className="p-6 md:p-8 bg-slate-50 dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-100 dark:border-slate-800">
                     <StatCounter value={parseInt(stat.value)} suffix="+" label={stat.label} />
                  </div>
                ))}
@@ -71,14 +68,16 @@ const AboutSection = () => {
         </div>
 
         {/* 2. STICKY MISSION/VISION/VALUES */}
-        {/* Reduced h-[250vh] to remove "huge space" and made it relative */}
-        <div ref={containerRef} className="relative h-[250vh] mb-10 md:mb-20">
-          <div className="sticky top-0 h-screen flex items-center">
+        {/* Mobile: h-auto (normal flow) | Desktop: h-[250vh] (sticky) */}
+        <div ref={containerRef} className="relative h-auto lg:h-[250vh] mb-20">
+          <div className="lg:sticky lg:top-0 lg:h-screen flex items-center">
+            
             {/* GLASSMORPHISM BOX */}
-            <div className="w-full bg-slate-900 dark:bg-slate-900/80 rounded-[3rem] p-8 md:p-20 text-white relative shadow-2xl border border-white/10 backdrop-blur-xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
+            <div className="w-full bg-slate-900 rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-white relative shadow-2xl border border-white/10 backdrop-blur-xl overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 bg-blue-600/10 blur-[80px] md:blur-[120px] pointer-events-none"></div>
 
-              <div className="relative h-[400px] flex items-center justify-center">
+              {/* DESKTOP CONTENT (Stacked Layers) */}
+              <div className="hidden lg:block relative h-[400px]">
                 {sections.map((section) => (
                   <motion.div
                     key={section.id}
@@ -86,7 +85,7 @@ const AboutSection = () => {
                     className="absolute inset-0 flex flex-col justify-center"
                   >
                     <h2 className="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] mb-4">{section.title}</h2>
-                    <h4 className="text-3xl md:text-5xl font-bold mb-6 text-white">{section.subtitle}</h4>
+                    <h4 className="text-4xl md:text-5xl font-bold mb-6 text-white">{section.subtitle}</h4>
                     <p className="text-xl md:text-2xl text-slate-300 leading-snug font-light max-w-4xl">{section.text}</p>
                   </motion.div>
                 ))}
@@ -96,20 +95,45 @@ const AboutSection = () => {
                   className="absolute inset-0 flex flex-col justify-center"
                 >
                   <h2 className="text-blue-500 font-bold text-xs uppercase tracking-[0.4em] mb-8">Our Values</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-3 gap-6">
                     {aboutValues.map((v, i) => (
-                      <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                      <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
                         <div className="text-blue-500 font-black text-2xl mb-2">0{i+1}.</div>
-                        <div className="font-bold text-lg mb-2">{v.title}</div>
-                        <div className="text-slate-400 text-sm leading-relaxed">{v.desc}</div>
+                        <div className="font-bold text-lg mb-1">{v.title}</div>
+                        <div className="text-slate-400 text-xs leading-relaxed">{v.desc}</div>
                       </div>
                     ))}
                   </div>
                 </motion.div>
               </div>
 
-              {/* DOT INDICATORS */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
+              {/* MOBILE CONTENT (Natural Vertical Flow) */}
+              <div className="lg:hidden space-y-12 relative z-10">
+                {sections.map((section) => (
+                  <div key={section.id}>
+                    <h2 className="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em] mb-2">{section.title}</h2>
+                    <h4 className="text-2xl font-bold mb-3">{section.subtitle}</h4>
+                    <p className="text-slate-300 text-base leading-relaxed">{section.text}</p>
+                  </div>
+                ))}
+                <div>
+                  <h2 className="text-blue-500 font-bold text-[10px] uppercase tracking-[0.3em] mb-6">Our Values</h2>
+                  <div className="grid grid-cols-1 gap-4">
+                    {aboutValues.map((v, i) => (
+                      <div key={i} className="flex gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                        <span className="text-blue-500 font-black">0{i+1}.</span>
+                        <div>
+                          <div className="font-bold text-sm">{v.title}</div>
+                          <div className="text-slate-400 text-xs">{v.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* DESKTOP DOT INDICATORS */}
+              <div className="hidden lg:flex absolute bottom-10 left-1/2 -translate-x-1/2 gap-2">
                 {[0, 1, 2].map((i) => (
                   <motion.div 
                     key={i}
@@ -125,7 +149,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 3. SUCCESS FORMULA with Staggered Animation */}
+        {/* 3. SUCCESS FORMULA */}
         <div className="mb-32">
           <Reveal>
             <div className="text-center mb-16">
@@ -159,7 +183,7 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* 4. CERTIFICATES (Restored Original Layout) */}
+        {/* 4. CERTIFICATES */}
         <div className="mt-32 pt-24 border-t border-slate-100 dark:border-slate-800">
           <Reveal>
             <div className="text-center mb-24">

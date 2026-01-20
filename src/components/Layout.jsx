@@ -9,7 +9,7 @@ export default function Layout({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState(''); // Tracking for dots
+  const [activeSection, setActiveSection] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
@@ -20,7 +20,6 @@ export default function Layout({ children }) {
 
   const slowEase = "duration-1000 [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]";
 
-  // 1. Dot Navigation Links
   const dotLinks = useMemo(() => [
     { name: 'About Us', path: 'about' },
     { name: 'Services', path: 'services' },
@@ -43,7 +42,7 @@ export default function Layout({ children }) {
     { name: 'Career', path: '/career', type: 'route' },
   ];
 
-  // 2. Theme Logic
+  // 1. Theme Logic
   useEffect(() => {
     const root = document.documentElement;
     theme === 'dark' ? root.classList.add('dark') : root.classList.remove('dark');
@@ -68,7 +67,7 @@ export default function Layout({ children }) {
     });
   };
 
-  // 3. Combined Scroll & Observer Logic
+  // 2. Global Scroll & Intersection Observer Logic
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY;
@@ -80,51 +79,77 @@ export default function Layout({ children }) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
         });
       },
-      { rootMargin: '-30% 0px -30% 0px', threshold: 0.1 }
+      { 
+        rootMargin: '-20% 0px -70% 0px', 
+        threshold: 0 
+      }
     );
 
-    dotLinks.forEach(link => {
-      const el = document.getElementById(link.path);
-      if (el) observer.observe(el);
-    });
+    if (pathname === '/') {
+      dotLinks.forEach(link => {
+        const el = document.getElementById(link.path);
+        if (el) observer.observe(el);
+      });
+    }
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
-  }, [dotLinks]);
+  }, [dotLinks, pathname]);
 
-  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
-
+  // 3. Centralized Smooth Scroll Handler
   const handleScrollLink = (e, id) => {
     setIsMenuOpen(false);
+    
+    // Check if it's an internal route first
     if (id.startsWith('/')) return;
+
     if (pathname === '/') {
       e.preventDefault();
-      if (id === 'top') window.scrollTo({ top: 0, behavior: 'smooth' });
-      else {
-        const target = document.getElementById(id);
-        if (target) window.scrollTo({ top: target.offsetTop - 100, behavior: 'smooth' });
+      
+      if (id === 'top' || id === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const target = document.getElementById(id);
+      if (target) {
+        const headerOffset = 90; // Adjusts for the sticky header height
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
       }
     } else {
+      // If navigating from another page, go home and append hash
       e.preventDefault();
       navigate(id === 'top' ? '/' : `/#${id}`);
     }
   };
 
+  useEffect(() => { setIsMenuOpen(false); }, [pathname]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 font-sans flex flex-col transition-colors duration-700">
       
+      {/* Spacer to prevent content jump under fixed nav */}
       <div className={`transition-all ${slowEase} ${isScrolled ? 'h-24' : 'h-64 md:h-80'}`} />
 
+      {/* Navigation */}
       <nav className={`fixed top-0 left-0 w-full z-[100] border-b transition-all ${slowEase} ${isScrolled ? 'h-24 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md shadow-md border-slate-200 dark:border-slate-800' : 'h-64 md:h-80 bg-white dark:bg-slate-950 shadow-none border-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 h-full relative">
           
-          {/* LOGO GROUP */}
+          {/* Logo Group */}
           <div className={`absolute transition-all ${slowEase} flex items-center z-[110] ${isScrolled ? 'left-6 top-1/2 -translate-y-1/2 translate-x-0 scale-100' : 'left-1/2 top-8 md:top-12 -translate-x-1/2 scale-125 md:scale-150'}`}>
             <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-3 md:gap-5">
               <img src={logo} alt="ISC" className={`w-auto transition-all ${slowEase} ${isScrolled ? 'h-12' : 'h-20 md:h-28'} dark:brightness-125`} />
@@ -134,11 +159,16 @@ export default function Layout({ children }) {
             </Link>
           </div>
 
-          {/* NAV LINKS + ACTION BUTTONS */}
+          {/* Nav Links */}
           <div className={`absolute transition-all ${slowEase} flex items-center ${isScrolled ? 'right-6 top-1/2 -translate-y-1/2 translate-x-0 w-auto' : 'left-0 bottom-10 w-full justify-center px-6'}`}>
             <div className={`hidden lg:flex items-center transition-all ${slowEase} ${isScrolled ? 'gap-x-4 xl:gap-x-6' : 'gap-x-8 xl:gap-x-10'}`}>
               {navLinks.map((link) => (
-                <Link key={link.name} to={link.type === 'route' ? link.path : '#'} onClick={link.type !== 'route' ? (e) => handleScrollLink(e, link.path) : undefined} className={`font-bold text-slate-600 dark:text-slate-300 hover:text-blue-900 dark:hover:text-blue-400 uppercase tracking-widest whitespace-nowrap transition-all ${slowEase} ${isScrolled ? 'text-[11px]' : 'text-[13px]'}`}>
+                <Link 
+                  key={link.name} 
+                  to={link.type === 'route' ? link.path : '#'} 
+                  onClick={link.type !== 'route' ? (e) => handleScrollLink(e, link.path) : undefined} 
+                  className={`font-bold text-slate-600 dark:text-slate-300 hover:text-blue-900 dark:hover:text-blue-400 uppercase tracking-widest whitespace-nowrap transition-all ${slowEase} ${isScrolled ? 'text-[11px]' : 'text-[13px]'}`}
+                >
                   {link.name}
                 </Link>
               ))}
@@ -149,7 +179,7 @@ export default function Layout({ children }) {
               </motion.div>
             </div>
 
-            {/* THEME & MOBILE BUTTONS */}
+            {/* Theme & Mobile Toggle */}
             <div className={`flex items-center gap-4 ml-6 transition-all ${slowEase} ${!isScrolled && 'lg:absolute lg:right-6'}`}>
               <button onClick={(e) => toggleTheme(e)} className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 hover:ring-2 ring-blue-500 transition-all overflow-hidden flex-shrink-0">
                 {theme === 'light' ? (
@@ -164,28 +194,48 @@ export default function Layout({ children }) {
             </div>
           </div>
         </div>
+        {/* Top Progress Bar */}
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600 dark:bg-blue-400 origin-[0%] z-[110]" style={{ scaleX }} />
       </nav>
 
-      {/* FLOATING DOT NAVIGATION (Restore) */}
-      <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-5 items-end group">
-        {dotLinks.map((link) => (
-          <button key={link.path} onClick={(e) => handleScrollLink(e, link.path)} className="flex items-center gap-4 group/item">
-            <span className={`text-[10px] font-bold uppercase tracking-widest text-blue-900 dark:text-blue-400 transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 whitespace-nowrap`}>
-              {link.name}
-            </span>
-            <div className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-500 
-              ${activeSection === link.path 
-                ? 'bg-blue-900 border-blue-900 scale-150 shadow-[0_0_12px_rgba(30,58,138,0.4)]' 
-                : 'bg-transparent border-slate-300 dark:border-slate-600 group-hover:border-blue-400'}`} 
-            />
-          </button>
-        ))}
-      </aside>
+      {/* Floating Dot Navigation - Visible only on Home */}
+{pathname === '/' && (
+  <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-6 items-end group">
+    {dotLinks.map((link) => {
+      const isActive = activeSection === link.path;
+      return (
+        <button 
+          key={link.path} 
+          onClick={(e) => handleScrollLink(e, link.path)} 
+          className="flex items-center gap-4 group/item relative"
+        >
+          {/* Tooltip Label - Dark text for Light sections, White text for Dark sections */}
+          <span className={`text-[10px] font-bold uppercase tracking-widest transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 whitespace-nowrap
+            px-2 py-1 rounded
+            ${isActive 
+              ? 'text-blue-900 dark:text-blue-400' 
+              : 'text-slate-600 dark:text-slate-300'
+            }`}
+          >
+            {link.name}
+          </span>
+
+          {/* The Dot - Solid colors for guaranteed visibility */}
+          <div className={`w-2.5 h-2.5 rounded-full transition-all duration-500 border-2 
+            ${isActive 
+              ? 'bg-blue-600 border-blue-600 scale-150 shadow-[0_0_10px_rgba(37,99,235,0.4)]' 
+              : 'bg-slate-200 dark:bg-slate-800 border-slate-400 dark:border-slate-500 group-hover:border-blue-500'
+            }`}
+          />
+        </button>
+      );
+    })}
+  </aside>
+)}
 
       <main className="flex-grow">{children}</main>
 
-      {/* RESTORED BACK TO TOP BUTTON */}
+      {/* Back to Top Button */}
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
@@ -193,34 +243,13 @@ export default function Layout({ children }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            // Positioned right-8 but with a high z-index and distinct styling
             className="fixed bottom-10 right-10 z-[200] p-4 bg-blue-900 dark:bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-800 transition-all group"
           >
-            {/* Progress Circle */}
             <svg className="absolute inset-0 w-full h-full -rotate-90">
-              <motion.circle 
-                cx="50%" cy="50%" r="26" 
-                fill="transparent" 
-                strokeWidth="3" 
-                stroke="rgba(255,255,255,0.2)" 
-              />
-              <motion.circle 
-                cx="50%" cy="50%" r="26" 
-                fill="transparent" 
-                strokeWidth="3" 
-                stroke="white" 
-                style={{ pathLength: scrollValue }} 
-              />
+              <motion.circle cx="50%" cy="50%" r="26" fill="transparent" strokeWidth="3" stroke="rgba(255,255,255,0.2)" />
+              <motion.circle cx="50%" cy="50%" r="26" fill="transparent" strokeWidth="3" stroke="white" style={{ pathLength: scrollValue }} />
             </svg>
-            
-            {/* Arrow Icon */}
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 relative z-10 group-hover:-translate-y-1 transition-transform" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 relative z-10 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
           </motion.button>

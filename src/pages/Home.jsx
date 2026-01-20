@@ -14,50 +14,56 @@ import RequestQuoteCTA from "./Home/RequestQuoteCTA";
 const Home = () => {
   return (
     <div className="bg-white dark:bg-slate-950">
-      {/* 1. HERO: Leading into About with an angle */}
-      <div className="relative" id="home">
+      {/* 1. HERO */}
+      <section className="relative" id="home">
         <HeroSection />
         <SectionDivider colorClass="fill-slate-50 dark:fill-slate-900" />
-      </div>
+      </section>
 
-      {/* 2. ABOUT: Soft background for readability */}
-      <section className="bg-slate-50 dark:bg-slate-900">
+      {/* 2. ABOUT */}
+      <section className="bg-slate-50 dark:bg-slate-900" id="about">
         <AboutSection />
       </section>
 
-      <div className="relative" id='services'>
-        {/* 3. SERVICES: Clean white background */}
+      {/* 3. SERVICES */}
+      <section className="relative" id="services">
         <ServicesSection />
+      </section>
+
+      {/* 4. SOLUTIONS - ID on a wrapper to ensure MeshBackground doesn't swallow it */}
+      <div id="solutions">
+        <MeshBackground className="bg-slate-50 dark:bg-slate-900/50">
+          <SolutionsSection />
+        </MeshBackground>
       </div>
 
-      {/* 4. SOLUTIONS: Add depth with Mesh */}
-      <MeshBackground className="bg-slate-50 dark:bg-slate-900/50" id="solutions">
-        <SolutionsSection />
-      </MeshBackground>
+      {/* 5. SUPPORT */}
+      <section className="relative" id="support">
+        <SupportSection />
+      </section>
 
-      {/* 5. SUPPORT: Transitioning back to white */}
-      <SupportSection />
-
-      {/* 6. CUSTOMERS: Using an angled cut to separate the "Social Proof" section */}
-      <div className="relative bg-white dark:bg-slate-950">
+      {/* 6. CUSTOMERS */}
+      <section className="relative bg-white dark:bg-slate-950" id="customers-preview">
         <CustomersSection />
         <SectionDivider colorClass="fill-slate-100 dark:fill-slate-900" />
+      </section>
+
+      {/* 7. PROJECTS */}
+      <div id="projects">
+        <MeshBackground className="bg-slate-100 dark:bg-slate-900 py-10">
+          <ProjectsSection />
+        </MeshBackground>
       </div>
 
-      {/* 7. PROJECTS: Deep Mesh for your portfolio carousel */}
-      <MeshBackground className="bg-slate-100 dark:bg-slate-900 py-10" id="projects">
-        <ProjectsSection />
-      </MeshBackground>
+      {/* 8. PRODUCTS */}
+      <section className="relative" id="products">
+        <ProductsSection />
+      </section>
 
-      {/* 8. PRODUCTS: Final core section */}
-      <ProductsSection />
-
-      {/* 9. REQUEST QUOTE CTA: Ending with a strong call-to-action */}
-      <div className="relative bg-white dark:bg-slate-950" id="request-quote-cta">
-        
+      {/* 9. REQUEST QUOTE CTA */}
+      <section className="relative bg-white dark:bg-slate-950" id="request-quote-cta">
         <RequestQuoteCTA />
-        
-      </div>
+      </section>
     </div>
   );
 };

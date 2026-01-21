@@ -75,9 +75,9 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* Logistics Center Card */}
+          {/* Warehouse & Logistics Card */}
           <Reveal delay={0.2} className="h-full">
-            <div className="h-full bg-slate-100/50 dark:bg-slate-900/50 p-7 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-300 group">
+            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="w-14 h-14 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
@@ -85,14 +85,25 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">Logistics Center</h3>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">Warehouse & Logistics</h3>
                   <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Prince Abdulmohsen Street, Al Khobar</p>
-                  <div className="space-y-4 pt-6 border-t border-slate-200 dark:border-slate-800">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Contact Numbers</span>
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300">+966-13-862000 / +966-13-8650102</p>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
+                  <div className="space-y-2">
+                    <a href="tel:+96613862000" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-862000</a>
+                    <a href="tel:+966138650102" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8650102</a>
                   </div>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Warehouse Emails</p>
+                  <div className="space-y-2">
+                    <a href="mailto:procurement@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">procurement@iscksa.com</a>
+                    <a href="mailto:store@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">store@iscksa.com</a>
+                  </div>
+                </div>
+              </div>
+                  
                 </div>
               </div>
             </div>

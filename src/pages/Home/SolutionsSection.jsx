@@ -171,8 +171,7 @@ const SolutionsSection = () => {
               {/* Decorative Tech UI: Corner "LED" indicators for futuristic aesthetic */}
               <div className="absolute top-6 right-6 md:top-8 md:right-8 flex gap-1.5 md:gap-2">
                 <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 animate-pulse" />
-                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-slate-700" />
-                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-slate-700" />
+                
               </div>
             </div>
           </div>

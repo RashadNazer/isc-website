@@ -2,7 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import conceptImage from "../../assets/office.png";
-import officeFront from "../../assets/officefront.png"; // New Image Imported
+import officeFront from "../../assets/officefront.png";
+// Import the background component
+import LiquidEther from '../../component/LiquidEther'; 
 
 import { 
   Reveal, 
@@ -25,18 +27,44 @@ const HeroSection = () => {
     <div className="overflow-x-hidden">
       <section
         id="home"
-        className="min-h-[100svh] pt-32 pb-20 md:pt-40 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center text-white relative overflow-hidden transition-all duration-700"
+        /* Note: Changed bg-gradient to a slightly more transparent version or removed 
+           to let the LiquidEther colors shine through if desired */
+        className="min-h-[100svh] pt-32 pb-20 md:pt-40 bg-slate-950 flex items-center text-white relative overflow-hidden transition-all duration-700"
       >
-        {/* Background Decorative Elements */}
+        {/* --- LIQUID ETHER BACKGROUND IMPLEMENTATION --- */}
+        <div className="absolute inset-0 z-0 opacity-40">
+          <LiquidEther
+            colors={[ '#0F172A', '#2563EB', '#60A5FA' ]}
+            mouseForce={15}
+            cursorSize={100}
+            isViscous={true}
+            viscous={30}
+            iterationsViscous={32}
+            iterationsPoisson={32}
+            resolution={0.5}
+            isBounce={false}
+            autoDemo
+            autoSpeed={0.3}
+            autoIntensity={2.2}
+            takeoverDuration={0.25}
+            autoResumeDelay={3000}
+            autoRampDuration={0.6}
+            color0="#5227FF"
+            color1="#FF9FFC"
+            color2="#B19EEF"
+          />
+        </div>
+
+        {/* Existing Decorative Elements - Kept for extra depth */}
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"
+          className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none z-0"
         />
 
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
           
-          {/* LEFT CONTENT: (Occupies 7 columns on large screens) */}
+          {/* LEFT CONTENT */}
           <div className="lg:col-span-7 space-y-10 text-center lg:text-left">
             <Reveal>
               <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full mb-6">
@@ -98,9 +126,8 @@ const HeroSection = () => {
             </Reveal>
           </div>
 
-          {/* RIGHT CONTENT: VISUAL COMPOSITION (Occupies 5 columns) */}
+          {/* RIGHT CONTENT: VISUAL COMPOSITION */}
           <div className="lg:col-span-5 relative h-[500px] md:h-[650px] mt-12 lg:mt-0">
-            {/* Primary Image: Office Front (The Foundation) */}
             <Reveal delay={0.3} y={40}>
               <motion.div 
                 animate={{ y: [0, -15, 0] }}
@@ -118,7 +145,6 @@ const HeroSection = () => {
               </motion.div>
             </Reveal>
 
-            {/* Secondary Image: Concept Interior (The Vision) */}
             <Reveal delay={0.5} y={60}>
               <motion.div 
                 animate={{ y: [0, 15, 0] }}
@@ -142,7 +168,6 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Tailwind Custom Animation Injection */}
       <style jsx>{`
         .animate-spin-slow {
           animation: spin 20s linear infinite;

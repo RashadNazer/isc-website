@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { solutionData } from "../../data/homeData";
 import { motion, AnimatePresence } from "framer-motion";
+import LightRays from '../../component/LightRays'; // Updated import
 
 /**
  * SolutionsSection Component
- * * Features:
+ * Features:
  * - Interactive tab switching for different technology solutions.
  * - Mobile-friendly horizontal scroll navigation with auto-centering.
  * - Shared layout animations for a premium desktop feel.
  * - Dynamic content display using Framer Motion.
+ * - Dynamic LightRays background with mouse influence.
  */
 const SolutionsSection = () => {
   // Local state to track which solution is currently being viewed
@@ -19,25 +21,46 @@ const SolutionsSection = () => {
 
   /**
    * Effect: Auto-scroll selected tab into view (Mobile specific)
-   * This ensures that when a user clicks a tab that is partially off-screen
-   * horizontally, the container smoothly scrolls to center that tab.
    */
   useEffect(() => {
     const activeTab = document.getElementById(`tab-${activeSol.id}`);
     if (activeTab && scrollRef.current) {
       const container = scrollRef.current;
-      // Calculation: Get the center point of the container and align the tab's center to it
       const scrollLeft = activeTab.offsetLeft - (container.offsetWidth / 2) + (activeTab.offsetWidth / 2);
       container.scrollTo({ left: scrollLeft, behavior: "smooth" });
     }
   }, [activeSol]);
 
   return (
-    <section id="solutions" className="py-16 md:py-24 bg-white dark:bg-slate-950 transition-colors duration-500 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section 
+      id="solutions" 
+      className="relative isolate z-0 py-16 md:py-24 bg-white dark:bg-slate-950 transition-colors duration-500 overflow-hidden"
+    >
+      
+      {/* --- LIGHT RAYS BACKGROUND --- */}
+      <div className="absolute inset-0 z-[-1] pointer-events-auto opacity-40 dark:opacity-60">
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#3b82f6" // Changed to match your blue-600 theme
+          raysSpeed={1}
+          lightSpread={0.5}
+          rayLength={3}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0}
+          distortion={0}
+          className="custom-rays"
+          pulsating={false}
+          fadeDistance={1}
+          saturation={1}
+        />
+      </div>
+
+      {/* Main container with pointer-events-none to let mouse 'pass through' to the LightRays */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 pointer-events-none">
         
-        {/* SECTION HEADER: Standardized spacing and scaling for mobile/desktop */}
-        <div className="mb-10 md:mb-20 text-center lg:text-left">
+        {/* SECTION HEADER */}
+        <div className="mb-10 md:mb-20 text-center lg:text-left pointer-events-auto">
           <motion.h2 
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -55,31 +78,24 @@ const SolutionsSection = () => {
           </motion.h3>
         </div>
 
-        {/* MAIN CONTENT GRID: 
-            Mobile: Stacked (selectors top, content bottom)
-            Desktop: 12-column grid side-by-side
-        */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-stretch">
           
-          {/* LEFT: SELECTORS
-              Mobile: Horizontal scroll bar (flex-row)
-              Desktop: Vertical sidebar (flex-col)
-          */}
+          {/* LEFT: SELECTORS */}
           <div 
             ref={scrollRef}
-            className="lg:col-span-4 flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-3 pb-4 lg:pb-0 no-scrollbar snap-x touch-pan-x"
+            className="lg:col-span-4 flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-3 pb-4 lg:pb-0 no-scrollbar snap-x touch-pan-x pointer-events-auto"
           >
             {solutionData.map((sol) => {
               const isActive = activeSol.id === sol.id;
               return (
                 <button
                   key={sol.id}
-                  id={`tab-${sol.id}`} // Required for the useEffect scroll calculation
+                  id={`tab-${sol.id}`}
                   onClick={() => setActiveSol(sol)}
-                  className={`group relative flex-shrink-0 lg:flex-shrink-1 w-[260px] lg:w-full text-left p-5 md:p-6 rounded-2xl md:rounded-3xl transition-all duration-500 border snap-center ${
+                  className={`group relative flex-shrink-0 lg:flex-shrink-1 w-[260px] lg:w-full text-left p-5 md:p-6 rounded-2xl md:rounded-3xl transition-all duration-500 border snap-center backdrop-blur-md ${
                     isActive 
                       ? "bg-blue-600 border-blue-600 shadow-lg shadow-blue-500/20" 
-                      : "bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800"
+                      : "bg-slate-50/50 dark:bg-slate-900/40 border-slate-100 dark:border-white/5"
                   }`}
                 >
                   <div className="relative z-10">
@@ -95,10 +111,9 @@ const SolutionsSection = () => {
                     </h4>
                   </div>
                   
-                  {/* Visual Indicator: Arrow pointing to the content (Visible only on Desktop) */}
                   {isActive && (
                     <motion.div 
-                      layoutId="arrow" // Shared layout animation ensures smooth movement between tabs
+                      layoutId="arrow"
                       className="absolute -right-3 top-1/2 -translate-y-1/2 hidden lg:block"
                     >
                       <div className="w-6 h-6 bg-blue-600 rotate-45" />
@@ -109,11 +124,9 @@ const SolutionsSection = () => {
             })}
           </div>
 
-          {/* RIGHT: CONTENT PREVIEW
-              Displays the selected solution details with smooth entry/exit transitions
-          */}
-          <div className="lg:col-span-8">
-            <div className="relative h-[500px] md:h-full md:min-h-[600px] bg-slate-900 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border border-slate-800">
+          {/* RIGHT: CONTENT PREVIEW */}
+          <div className="lg:col-span-8 pointer-events-auto">
+            <div className="relative h-[500px] md:h-full md:min-h-[600px] bg-slate-900/90 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border border-white/5 backdrop-blur-xl">
               
               <AnimatePresence mode="wait">
                 <motion.div
@@ -124,16 +137,13 @@ const SolutionsSection = () => {
                   transition={{ duration: 0.4 }}
                   className="absolute inset-0"
                 >
-                  {/* Background Visualization */}
                   <img 
                     src={activeSol.image} 
                     alt={activeSol.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-30 md:opacity-40"
+                    className="absolute inset-0 w-full h-full object-cover opacity-20 md:opacity-30"
                   />
-                  {/* Vignette/Gradient overlay to ensure text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
                   
-                  {/* Text Details Container */}
                   <div className="relative h-full p-6 md:p-16 flex flex-col justify-end">
                     <div className="max-w-2xl">
                       <motion.div
@@ -149,7 +159,6 @@ const SolutionsSection = () => {
                         </p>
                       </motion.div>
 
-                      {/* Pill-style Feature Tags */}
                       <div className="flex flex-wrap gap-2 md:gap-3">
                         {activeSol.features.map((feature, i) => (
                           <motion.span
@@ -168,14 +177,11 @@ const SolutionsSection = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Decorative Tech UI: Corner "LED" indicators for futuristic aesthetic */}
               <div className="absolute top-6 right-6 md:top-8 md:right-8 flex gap-1.5 md:gap-2">
                 <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 animate-pulse" />
-                
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

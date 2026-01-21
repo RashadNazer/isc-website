@@ -348,6 +348,8 @@ const Enquiry = () => {
               <p style={{ fontSize: "14px", margin: "2px 0" }}>{formData.person}</p>
               <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0" }}>{formData.company}</p>
               <p style={{ fontSize: "12px", color: "#2563eb", fontWeight: "bold", marginTop: "10px" }}>{formData.email}</p>
+              <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0" }}>{formData.mobile}</p>
+              <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0" }}>{formData.phone}</p>
             </div>
           </div>
 

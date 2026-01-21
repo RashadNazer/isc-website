@@ -143,8 +143,8 @@ export default function Footer() {
           </p>
           
           <div className="flex gap-8 order-1 lg:order-2">
-            <a href="#" className="hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">Terms of Use</a>
+            <a href="/privacy" className="hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">Privacy Policy</a>
+            <a href="/terms" className="hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">Terms of Use</a>
           </div>
         </div>
       </div>

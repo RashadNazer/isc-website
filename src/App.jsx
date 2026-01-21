@@ -13,6 +13,8 @@ import Projects from './pages/Projects';
 import PartnersPage from './pages/Products';
 import CustomersPage from './pages/Customers';
 import Enquiry from "./pages/Enquiry";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path="/products" element={<PartnersPage />} />
           <Route path="/customers" element={<CustomersPage />} />
           <Route path="/enquiry" element={<Enquiry />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           {/* Fallback for undefined routes */}
           <Route path="*" element={<div className="py-40 text-center">404 - Page Not Found</div>} />
         </Routes>

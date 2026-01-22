@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react"; // Added useMemo
 import { projectData } from "../../data/projects";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,11 +6,11 @@ import {
   Reveal, 
   MagneticButton 
 } from "../../components/UIComponents";
-import Balatro from '../../component/Balatro'; // Added Balatro import
+import Balatro from '../../component/Balatro';
 
 const ProjectsSection = () => {
   const [index, setIndex] = useState(0);
-  const featuredProjects = projectData?.slice(0, 6) || [];
+  const featuredProjects = useMemo(() => projectData?.slice(0, 6) || [], []);
 
   const nextProject = () => {
     setIndex((prev) => (prev + 1) % featuredProjects.length);
@@ -20,27 +20,28 @@ const ProjectsSection = () => {
     setIndex((prev) => (prev - 1 + featuredProjects.length) % featuredProjects.length);
   };
 
+  // --- FIX: Memoize the background so it never re-renders when 'index' changes ---
+  const MemoizedBackground = useMemo(() => (
+    <div className="absolute inset-0 z-[-1] pointer-events-none">
+      <Balatro
+        isRotate={false}
+        mouseInteraction={true}
+        pixelFilter={745}
+        color1="#2563eb" 
+        color2="#0f172a" 
+        color3="#3b82f6" 
+      />
+      <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/40 pointer-events-none" />
+    </div>
+  ), []); // Empty dependency array means it only creates once
+
   return (
     <section 
       id="projects" 
       className="relative isolate z-0 py-16 md:py-20 bg-white dark:bg-slate-950 overflow-hidden transition-colors duration-500"
     >
-      
-      {/* --- BRANDED BALATRO BACKGROUND --- */}
-      <div className="absolute inset-0 z-[-1] pointer-events-auto">
-        <Balatro
-          isRotate={false}
-          
-          mouseInteraction={true}
-          pixelFilter={745}
-          // Synced with website branding: Blue-600, Deep Slate, and Sky Blue
-          color1="#2563eb" 
-          color2="#0f172a" 
-          color3="#3b82f6" 
-        />
-        {/* Subtle overlay to ensure text readability while keeping the animation visible */}
-        <div className="absolute inset-0 bg-white/40 dark:bg-slate-950/40 pointer-events-none" />
-      </div>
+      {/* BACKGROUND RENDERED HERE */}
+      {MemoizedBackground}
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 pointer-events-none">
         
@@ -66,72 +67,81 @@ const ProjectsSection = () => {
         </div>
 
         {/* CAROUSEL CONTAINER */}
-        <div className="relative h-[400px] md:h-[450px] flex items-center justify-center">
-          <div className="relative w-full max-w-[280px] xs:max-w-sm md:max-w-md h-full flex items-center justify-center pointer-events-auto">
-            
-            <AnimatePresence initial={false}>
-              {featuredProjects.map((project, i) => {
-                let position = i - index;
-                if (position < -1) position = position + featuredProjects.length;
-                if (position > 1) position = position - featuredProjects.length;
+<div className="relative h-[400px] md:h-[450px] flex items-center justify-center">
+  <div className="relative w-full max-w-[280px] xs:max-w-sm md:max-w-md h-full flex items-center justify-center pointer-events-auto">
+    
+    {/* mode="popLayout" allows items to slide over each other without jumping */}
+    <AnimatePresence initial={false} mode="popLayout">
+      {featuredProjects.map((project, i) => {
+        // Calculate the relative position in the circle
+        let position = i - index;
+        if (position < -Math.floor(featuredProjects.length / 2)) position += featuredProjects.length;
+        if (position > Math.floor(featuredProjects.length / 2)) position -= featuredProjects.length;
 
-                if (Math.abs(position) > 1) return null;
+        // Determine if the card is visible (Center, Left, or Right)
+        const isVisible = Math.abs(position) <= 1;
 
-                return (
-                  <motion.div
-                    key={project.id}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    onDragEnd={(e, { offset }) => {
-                      if (offset.x > 100) prevProject();
-                      else if (offset.x < -100) nextProject();
-                    }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{
-                      opacity: position === 0 ? 1 : 0.3,
-                      scale: position === 0 ? 1 : 0.8,
-                      x: position * (window.innerWidth < 768 ? 160 : 280),
-                      rotateY: position * 30,
-                      zIndex: position === 0 ? 10 : 5,
-                      filter: position === 0 ? "blur(0px)" : "blur(8px)",
-                    }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="absolute w-full cursor-grab active:cursor-grabbing"
-                  >
-                    {/* GLASS PROJECT CARD */}
-                    <div className={`
-                      bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border transition-colors duration-500
-                      shadow-xl md:shadow-2xl flex flex-col justify-between min-h-[300px] md:min-h-[320px]
-                      ${position === 0 
-                        ? "border-blue-500/40 ring-1 ring-blue-500/10 shadow-blue-500/5" 
-                        : "border-slate-200/50 dark:border-white/5 pointer-events-none"}
-                    `}>
-                      <div>
-                        <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg">
-                          {project.category}
-                        </span>
-                        <h4 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mt-4 md:mt-6 leading-tight">
-                          {project.name}
-                        </h4>
-                      </div>
+        return (
+          <motion.div
+            key={project.id}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(e, { offset }) => {
+              if (offset.x > 100) prevProject();
+              else if (offset.x < -100) nextProject();
+            }}
+            // Use initial/animate/exit to handle the "sliding" entry and exit
+            initial={false}
+            animate={{
+              opacity: position === 0 ? 1 : (isVisible ? 0.3 : 0),
+              scale: position === 0 ? 1 : 0.8,
+              x: position * (window.innerWidth < 768 ? 180 : 320), // Increased spacing for smoother arc
+              rotateY: position * 35,
+              zIndex: position === 0 ? 10 : 5,
+              filter: position === 0 ? "blur(0px)" : "blur(4px)",
+              pointerEvents: position === 0 ? "auto" : "none",
+            }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 150, // Lower stiffness for a smoother, less "snappy" feel
+              damping: 25, 
+              mass: 1.2 
+            }}
+            className="absolute w-full cursor-grab active:cursor-grabbing"
+          >
+            {/* GLASS PROJECT CARD */}
+            <div className={`
+              bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border transition-all duration-700
+              shadow-xl md:shadow-2xl flex flex-col justify-between min-h-[300px] md:min-h-[320px]
+              ${position === 0 
+                ? "border-blue-500/40 ring-1 ring-blue-500/10 shadow-blue-500/5" 
+                : "border-slate-200/50 dark:border-white/5"}
+            `}>
+              <div>
+                <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg">
+                  {project.category}
+                </span>
+                <h4 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mt-4 md:mt-6 leading-tight">
+                  {project.name}
+                </h4>
+              </div>
 
-                      <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-slate-200/50 dark:border-white/10 flex justify-between">
-                        <div>
-                          <p className="text-slate-400 dark:text-slate-500 text-[9px] md:text-[10px] uppercase font-bold mb-1">Location</p>
-                          <p className="text-slate-700 dark:text-slate-300 font-bold text-sm md:text-base">{project.city}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-slate-400 dark:text-slate-500 text-[9px] md:text-[10px] uppercase font-bold mb-1">Year</p>
-                          <p className="text-slate-900 dark:text-white font-bold text-sm md:text-base">{project.year}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+              <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-slate-200/50 dark:border-white/10 flex justify-between">
+                <div>
+                  <p className="text-slate-400 dark:text-slate-500 text-[9px] md:text-[10px] uppercase font-bold mb-1">Location</p>
+                  <p className="text-slate-700 dark:text-slate-300 font-bold text-sm md:text-base">{project.city}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-slate-400 dark:text-slate-500 text-[9px] md:text-[10px] uppercase font-bold mb-1">Year</p>
+                  <p className="text-slate-900 dark:text-white font-bold text-sm md:text-base">{project.year}</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        );
+      })}
+    </AnimatePresence>
+  </div>
 
           {/* NAVIGATION ARROWS */}
           <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2 md:px-10 z-20 pointer-events-none">
@@ -160,7 +170,6 @@ const ProjectsSection = () => {
             />
           ))}
         </div>
-
       </div>
     </section>
   );

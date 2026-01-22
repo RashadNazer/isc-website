@@ -7,14 +7,18 @@ import html2canvas from "html2canvas";
 import { 
   Reveal, 
   MagneticButton, 
-  MeshBackground 
 } from "../components/UIComponents"; 
 
 // --- ASSET IMPORTS ---
 import MainLogo from "../assets/logo.png";
 import FooterLogo from "../assets/footerlogo.png";
+import Aurora from '../component/Aurora'; 
 
-// List of available categories for the enquiry dropdown
+/**
+ * Enquiry Component
+ * Handles multi-part form submission, automated email notification via EmailJS,
+ * and client-side PDF generation of the enquiry record.
+ */
 const enquiryTypes = [
   "In-Hand", "Bidding", "Budgetary In-Hand", "Budgetary Bidding",
   "Change Order", "Upgrade", "Repair/Fix", "Replace",
@@ -22,22 +26,21 @@ const enquiryTypes = [
 
 const Enquiry = () => {
   // --- REFS ---
-  const form = useRef(); // References the actual HTML form for EmailJS
-  const pdfExportComponent = useRef(); // References the hidden div used to generate the PDF template
+  const form = useRef(); // Links to the actual <form> element for EmailJS
+  const pdfExportComponent = useRef(); // Links to the hidden template used for PDF generation
   
   // --- STATE MANAGEMENT ---
-  const [submitted, setSubmitted] = useState(false); // Toggles between the form and the success message
-  const [formData, setFormData] = useState({}); // Stores all text input values
-  const [files, setFiles] = useState([]); // Stores the list of files selected by the user
-  const [countdown, setCountdown] = useState(25); // Timer for auto-redirect after success
-  const [refNumber, setRefNumber] = useState(null); // Unique ID for the specific enquiry
-  const [isSending, setIsSending] = useState(false); // Loading state for the email submission
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false); // Loading state for PDF creation
+  const [submitted, setSubmitted] = useState(false); // Toggles between Form view and Success view
+  const [formData, setFormData] = useState({}); // Stores text input values
+  const [files, setFiles] = useState([]); // Stores locally selected File objects
+  const [countdown, setCountdown] = useState(25); // Seconds remaining before auto-redirect
+  const [refNumber, setRefNumber] = useState(null); // Unique 5-digit ID for the enquiry
+  const [isSending, setIsSending] = useState(false); // Loading state for EmailJS trigger
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false); // Loading state for html2canvas/jsPDF process
   const navigate = useNavigate();
 
   // --- AUTO-REDIRECT LOGIC ---
-  // Starts a countdown when the form is successfully submitted.
-  // When it hits 0, the user is navigated back to the homepage.
+  // Once 'submitted' is true, starts a 25s countdown to send user back to the home page
   useEffect(() => {
     let timer;
     if (submitted && countdown > 0) {
@@ -50,27 +53,21 @@ const Enquiry = () => {
     return () => clearInterval(timer);
   }, [submitted, countdown, navigate]);
 
-  // Updates formData state whenever a text input or select option changes
+  // --- FORM HANDLERS ---
   const handleChange = (e) => {
+    // Dynamic update for any input field using the 'name' attribute as key
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- FILE HANDLING ---
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (selectedFiles.length > 0) {
-      setFiles((prev) => [...prev, ...selectedFiles]); // Append new files to existing list
-      
-      /**
-       * CRITICAL FIX: We clear the input value manually. 
-       * This allows the user to re-select the same file if they removed it 
-       * by mistake, as the 'onChange' event only fires if the value changes.
-       */
-      e.target.value = ""; 
+      // Append new files to existing array
+      setFiles((prev) => [...prev, ...selectedFiles]); 
+      e.target.value = ""; // Reset input so same file can be re-selected if removed
     }
   };
 
-  // Filters out a file based on its index in the array
   const removeFile = (index) => {
     setFiles(files.filter((_, i) => i !== index));
   };
@@ -80,12 +77,13 @@ const Enquiry = () => {
     e.preventDefault();
     setIsSending(true);
     
-    // Generate a random 5-digit Reference ID
+    // Generate a random 5-digit reference number for tracking
     const generatedRef = Math.floor(Math.random() * 90000) + 10000;
     setRefNumber(generatedRef);
 
     try {
-      // Sends the form content directly to EmailJS using the provided IDs
+      // Send the form data directly to EmailJS
+      // Parameters: ServiceID, TemplateID, FormRef, PublicAPIKey
       await emailjs.sendForm(
         'service_fuzkfz6', 
         'template_ekdravs', 
@@ -100,33 +98,33 @@ const Enquiry = () => {
     }
   };
 
-  // --- PDF EXPORT LOGIC ---
+  // --- PDF GENERATION ENGINE ---
+  /**
+   * Captures the hidden DOM element (pdfExportComponent),
+   * converts it to a high-resolution canvas, then embeds that image into an A4 PDF.
+   */
   const generatePDF = async () => {
     setIsGeneratingPDF(true);
-    
-    // Brief pause to allow the hidden DOM to finalize rendering with latest state
+    // Small delay to ensure the DOM is fully rendered before capture
     await new Promise(r => setTimeout(r, 400));
-    
     const element = pdfExportComponent.current;
+    
     const options = {
-      scale: 3, // Increases resolution for a crisp PDF
-      useCORS: true, // Crucial for loading external images into the canvas
+      scale: 3, // High DPI for clear text
+      useCORS: true, // Allows cross-origin images (like logos) to be rendered
       allowTaint: true,
       backgroundColor: "#ffffff",
-      windowWidth: 794, // Standard pixel width for A4 at 72dpi
+      windowWidth: 794, // Standard A4 pixel width at 96 DPI
     };
 
     try {
-      // 1. Convert HTML/CSS into a high-res image (Canvas)
       const canvas = await html2canvas(element, options);
       const imgData = canvas.toDataURL("image/png", 1.0);
-      
-      // 2. Initialize jsPDF in A4 format
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      // 3. Place the image into the PDF and trigger download
+      
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
       pdf.save(`REF_${refNumber}_Enquiry.pdf`);
     } catch (err) {
@@ -137,18 +135,24 @@ const Enquiry = () => {
   };
 
   // --- REUSABLE TAILWIND STYLES ---
-  const inputStyles = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 px-4 py-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-800 outline-none transition-all duration-300";
+  const inputStyles = "w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/40 px-4 py-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-slate-800 outline-none transition-all duration-300";
   const labelStyles = "text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] ml-1 mb-2 block";
 
   return (
     <section className="relative py-20 md:py-32 bg-slate-50 dark:bg-slate-950 transition-colors overflow-hidden print:bg-white print:py-0">
-      {/* Visual background effect (hidden during browser print) */}
-      <div className="absolute inset-0 opacity-40 pointer-events-none print:hidden">
-        <MeshBackground />
+      
+      {/* Background visual effect - Disabled during printing */}
+      <div className="absolute inset-0 z-0 pointer-events-none print:hidden opacity-60 dark:opacity-40">
+        <Aurora
+          colorStops={["#2563eb", "#6366f1", "#1e293b"]} 
+          blend={0.5}
+          amplitude={1.0}
+          speed={0.5} 
+        />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent to-slate-50/50 dark:to-slate-950/50" />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 relative z-10">
-        {/* Only show header if form hasn't been submitted */}
         {!submitted && (
           <div className="mb-16 text-center print:hidden">
             <Reveal>
@@ -160,12 +164,12 @@ const Enquiry = () => {
 
         <AnimatePresence mode="wait">
           {submitted ? (
-            /* --- SUCCESS VIEW --- */
+            /* --- SUCCESS VIEW: Displayed after EmailJS confirms delivery --- */
             <motion.div 
               key="success"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-slate-900 border border-blue-100 dark:border-blue-900/30 rounded-[3rem] p-8 md:p-16 text-center shadow-2xl max-w-2xl mx-auto"
+              className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-blue-100 dark:border-blue-900/30 rounded-[3rem] p-8 md:p-16 text-center shadow-2xl max-w-2xl mx-auto"
             >
               <h3 className="text-3xl font-black mb-4 text-slate-900 dark:text-white uppercase tracking-tighter">Submission Successful</h3>
               <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-8 leading-relaxed print:text-slate-700 print:max-w-none print:text-left">
@@ -174,7 +178,6 @@ const Enquiry = () => {
                 Reference: <span className="font-mono text-blue-600 font-bold text-xl">#{refNumber}</span>
               </p>
               
-              {/* Post-submission actions */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto print:hidden">
                 <div className="w-full sm:w-1/2">
                   <MagneticButton>
@@ -190,7 +193,6 @@ const Enquiry = () => {
                 </div>
               </div>
 
-              {/* Redirect indicator */}
               <div className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 print:hidden">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
@@ -199,13 +201,13 @@ const Enquiry = () => {
               </div>
             </motion.div>
           ) : (
-            /* --- FORM VIEW --- */
+            /* --- FORM VIEW: Main enquiry interface --- */
             <Reveal delay={0.2}>
-              <form ref={form} onSubmit={handleSubmit} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[3rem] p-8 md:p-14 border border-slate-200/50 shadow-2xl space-y-8">
-                {/* Hidden input to ensure the Reference ID is included in the email sent by EmailJS */}
+              <form ref={form} onSubmit={handleSubmit} className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl rounded-[3rem] p-8 md:p-14 border border-slate-200/50 shadow-2xl space-y-8">
+                {/* Hidden field to include refNumber in the EmailJS payload */}
                 <input type="hidden" name="refNumber" value={refNumber || ''} />
                 
-                {/* Category 1: Project Details */}
+                {/* Section 1: Scope */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -230,7 +232,7 @@ const Enquiry = () => {
                   </div>
                 </div>
 
-                {/* Category 2: Client/Location Details */}
+                {/* Section 2: Logistics */}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -242,13 +244,13 @@ const Enquiry = () => {
                   </div>
                 </div>
 
-                {/* Category 3: File Upload Section */}
+                {/* Section 3: File Selection (UI Only - Files aren't sent to EmailJS due to size limits) */}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
                     <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">Technical Documents</span>
                   </div>
-                  <div className="relative group overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20 p-10 flex flex-col items-center justify-center transition-all hover:border-blue-500">
+                  <div className="relative group overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-800/20 p-10 flex flex-col items-center justify-center transition-all hover:border-blue-500">
                     <input type="file" multiple onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
                     <div className="relative z-10 flex flex-col items-center pointer-events-none">
                       <div className="mb-4 p-4 bg-blue-600/10 rounded-full text-blue-600">
@@ -264,11 +266,11 @@ const Enquiry = () => {
                     </div>
                   </div>
                   
-                  {/* Mapping through selected files to show a "chips" style list with delete button */}
+                  {/* Selected File List */}
                   {files.length > 0 && (
                     <div className="flex flex-wrap gap-3 mt-4">
                       {files.map((file, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700">
+                        <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-white/80 dark:bg-slate-800 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700">
                           <span className="truncate max-w-[150px]">{file.name}</span>
                           <button type="button" onClick={() => removeFile(idx)} className="text-red-500 hover:text-red-700 font-bold ml-1">✕</button>
                         </div>
@@ -277,7 +279,7 @@ const Enquiry = () => {
                   )}
                 </div>
 
-                {/* Category 4: Direct Contact Info */}
+                {/* Section 4: Contact Info */}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="h-[1px] w-8 bg-blue-600"></span>
@@ -291,10 +293,9 @@ const Enquiry = () => {
                   </div>
                 </div>
 
-                {/* Form submit button */}
                 <div className="pt-10 flex justify-center">
                   <MagneticButton>
-                    <button type="submit" disabled={isSending} className="px-16 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-2xl disabled:opacity-50 transition-all hover:bg-blue-600 active:scale-95">
+                    <button type="submit" disabled={isSending} className="px-16 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl text-[10px] uppercase tracking-[0.2em] shadow-2xl disabled:opacity-50 transition-all hover:bg-blue-600 hover:text-white active:scale-95">
                       {isSending ? "Sending..." : "Initialize Quote Request"}
                     </button>
                   </MagneticButton>
@@ -305,46 +306,23 @@ const Enquiry = () => {
         </AnimatePresence>
       </div>
 
-      {/* --- HIDDEN PDF TEMPLATE --- 
-          This section is rendered but hidden from the user's view (-20000px top).
-          It serves as the 'blueprint' that html2canvas reads to create the PDF image.
-      */}
+      {/* --- HIDDEN PDF TEMPLATE: Off-screen container used specifically for PDF export styling --- */}
       <div style={{ position: "absolute", top: "-20000px", left: "0" }}>
         <div ref={pdfExportComponent} style={{ width: "794px", minHeight: "1123px", padding: "60px", backgroundColor: "white", color: "#0f172a", fontFamily: "Arial, sans-serif", display: "flex", flexDirection: "column" }}>
-          
-          {/* Document Header with Logo alignment */}
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
-            alignItems: "center", 
-            borderBottom: "4px solid #2563eb", 
-            paddingBottom: "30px", 
-            marginBottom: "40px" 
-          }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "4px solid #2563eb", paddingBottom: "30px", marginBottom: "40px" }}>
             <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
               <img src={MainLogo} alt="Logo" style={{ height: "60px", width: "auto", objectFit: "contain" }} />
             </div>
-            
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-              <div style={{ 
-                backgroundColor: "#2563eb", 
-                padding: "10px 20px", 
-                borderRadius: "10px", 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center" 
-              }}>
+              <div style={{ backgroundColor: "#2563eb", padding: "10px 20px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <img src={FooterLogo} alt="Footer Logo" style={{ height: "45px", width: "auto", objectFit: "contain" }} />
               </div>
             </div>
           </div>
-
           <div style={{ marginBottom: "30px" }}>
             <h1 style={{ fontSize: "28px", fontWeight: "900", margin: "0 0 10px 0" }}>Enquiry Record</h1>
             <p style={{ color: "#2563eb", fontWeight: "bold", margin: "0" }}>REF: #{refNumber}</p>
           </div>
-
-          {/* Grid for Summary data in PDF */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", marginBottom: "40px" }}>
             <div>
               <h4 style={{ fontSize: "10px", fontWeight: "900", color: "#64748b", textTransform: "uppercase", marginBottom: "12px", borderBottom: "1px solid #e2e8f0" }}>Project Details</h4>
@@ -361,14 +339,10 @@ const Enquiry = () => {
               <p style={{ fontSize: "12px", color: "#475569", margin: "2px 0" }}>{formData.phone}</p>
             </div>
           </div>
-
-          {/* Text block for description */}
           <div style={{ marginBottom: "40px" }}>
             <h4 style={{ fontSize: "10px", fontWeight: "900", color: "#64748b", textTransform: "uppercase", marginBottom: "12px", borderBottom: "1px solid #e2e8f0" }}>Technical Description</h4>
             <p style={{ fontSize: "13px", lineHeight: "1.6", color: "#334155", whiteSpace: "pre-wrap" }}>{formData.desc}</p>
           </div>
-
-          {/* File list summary in the PDF */}
           {files.length > 0 && (
             <div style={{ marginTop: "20px", padding: "20px", border: "1px solid #e2e8f0", borderRadius: "12px" }}>
               <h4 style={{ fontSize: "10px", fontWeight: "900", color: "#64748b", textTransform: "uppercase", marginBottom: "12px" }}>Attached Specifications ({files.length})</h4>
@@ -381,8 +355,6 @@ const Enquiry = () => {
               </div>
             </div>
           )}
-
-          {/* Document timestamp footer */}
           <div style={{ marginTop: "auto", textAlign: "center", paddingTop: "40px" }}>
             <p style={{ fontSize: "9px", color: "#94a3b8", letterSpacing: "2px", textTransform: "uppercase" }}>Generated via Online Portal • {new Date().toLocaleDateString()}</p>
           </div>

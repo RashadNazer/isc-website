@@ -4,31 +4,68 @@ import {
   Reveal, 
   MagneticButton, 
   StatCounter, 
-  MeshBackground 
 } from "../components/UIComponents";
+import Aurora from '../component/Aurora';
+import SplitText from "../component/SplitText";
 
+/**
+ * Contact Component
+ * This page provides users with various ways to reach ISC, including 
+ * office locations, logistics details, and digital portal access.
+ */
 export default function Contact() {
+  // Callback for when the SplitText or motion animations finish
+  const handleAnimationComplete = () => {
+    console.log('Heading animation complete!');
+  };
+
   return (
-    <div className="bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500">
+    <div className="relative isolate bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500 overflow-x-hidden">
       
-      {/* HERO / HEADER SECTION 
-          Purpose: Sets the context of the page with the primary location (Al-Khobar).
-          Styling: Uses a subtle background tint (slate-50) and scaled typography for mobile vs desktop.
+      {/* --- GLOBAL AURORA BACKGROUND --- 
+          The Aurora component provides a subtle, animated gradient background.
+          Z-index is set to negative to keep it behind all content.
       */}
-      <section className="bg-slate-50 dark:bg-slate-900/50 pt-24 md:pt-32 pb-16 md:pb-20 border-b border-slate-100 dark:border-slate-800">
+      <div className="absolute inset-0 z-[-1] pointer-events-none opacity-30 dark:opacity-20">
+        <Aurora
+          colorStops={["#2563eb", "#ffffff", "#1e3a8a"]} 
+          blend={0.5}
+          amplitude={1.0}
+          speed={0.5} 
+        />
+      </div>
+
+      {/* HERO / HEADER SECTION 
+          Introduces the page with a clear "Get In Touch" message using text-splitting animations.
+      */}
+      <section className="bg-slate-50/50 dark:bg-slate-900/30 pt-24 md:pt-32 pb-16 md:pb-20 border-b border-slate-100 dark:border-slate-800 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 text-left lg:text-center">
-          {/* Motion div handles the initial fade-in and slide-up of the header text */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">
-              Get In Touch
-            </h2>
-            <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
-              Contact Us
-            </h1>
+            {/* Animated Eyebrow Text */}
+            <div className="mb-4">
+              <SplitText
+                text="Get In Touch"
+                className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-[0.3em]"
+                delay={30}
+                animationStep={0.03}
+              />
+            </div>
+            
+            {/* Main Animated Title */}
+            <div className="mb-6">
+              <SplitText
+                text="Contact Us"
+                className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight"
+                delay={50}
+                duration={1.25}
+                textAlign="center"
+              />
+            </div>
+
             <p className="text-base md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
               Headquartered in <span className="text-blue-900 dark:text-blue-300 font-bold">Al-Khobar</span>, ISC operates across the Kingdom to provide 
               unrivaled electronic and communication system support.
@@ -38,21 +75,16 @@ export default function Contact() {
       </section>
 
       {/* MAIN CONTACT GRID 
-          Purpose: Organizes physical addresses, logistics, and department-specific contact info.
+          A collection of cards detailing physical addresses and service contacts.
       */}
-      <section className="py-12 md:py-20 max-w-7xl mx-auto px-6">
-        
-        {/* ROW 1: ADDRESS & LOGISTICS 
-            Layout: Stacked on mobile, side-by-side (2 cols) on Large screens.
-            Note: "h-full" on Reveal and child ensures both cards stretch to match the tallest content.
-        */}
+      <section className="py-12 md:py-20 max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
           
-          {/* National Address Card */}
+          {/* National Address Card - Uses Reveal for scroll-triggered entry */}
           <Reveal delay={0.1} className="h-full">
-            <div className="h-full bg-white dark:bg-slate-900 p-7 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-300 group">
+            <div className="h-full bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-7 md:p-10 rounded-[2.5rem] border border-slate-200/50 dark:border-slate-800/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
               <div className="flex flex-col sm:flex-row items-start gap-6">
-                {/* Icon Container with hover animation */}
+                {/* Icon wrapper with hover scaling */}
                 <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -60,7 +92,11 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">National Address</h3>
+                  <SplitText
+                    text="National Address"
+                    className="text-xl font-black text-slate-900 dark:text-white mb-4"
+                    delay={40}
+                  />
                   <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">
                     Building 7739, Twenty-Second Street<br />
                     Madinat Al Umal District 34441<br />
@@ -77,7 +113,7 @@ export default function Contact() {
 
           {/* Warehouse & Logistics Card */}
           <Reveal delay={0.2} className="h-full">
-            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
+            <div className="h-full bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 shadow-sm flex flex-col group">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <div className="w-14 h-14 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 shrink-0 shadow-sm group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
@@ -85,25 +121,28 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">Warehouse & Logistics</h3>
+                  <SplitText
+                    text="Warehouse & Logistics"
+                    className="text-xl font-black text-slate-900 dark:text-white mb-4"
+                    delay={40}
+                  />
                   <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Prince Abdulmohsen Street, Al Khobar</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
-                  <div className="space-y-2">
-                    <a href="tel:+96613862000" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-862000</a>
-                    <a href="tel:+966138650102" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8650102</a>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
+                      <div className="space-y-2">
+                        <a href="tel:+96613862000" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-862000</a>
+                        <a href="tel:+966138650102" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8650102</a>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Warehouse Emails</p>
+                      <div className="space-y-2">
+                        <a href="mailto:procurement@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">procurement@iscksa.com</a>
+                        <a href="mailto:store@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">store@iscksa.com</a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Warehouse Emails</p>
-                  <div className="space-y-2">
-                    <a href="mailto:procurement@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">procurement@iscksa.com</a>
-                    <a href="mailto:store@iscksa.com" className="block text-base font-bold text-blue-700 dark:text-blue-400 hover:underline">store@iscksa.com</a>
-                  </div>
-                </div>
-              </div>
-                  
                 </div>
               </div>
             </div>
@@ -111,17 +150,19 @@ export default function Contact() {
         </div>
 
         {/* ROW 2: SALES & SUPPORT 
-            Layout: Changes to 2 cols starting at 'md' breakpoint.
+            Secondary contact information grid.
         */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-20">
-          
-          {/* Corporate HQ & Sales Information */}
+          {/* Corporate HQ Card */}
           <Reveal delay={0.3} className="h-full">
-            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm flex flex-col">
+              <div className="mb-8 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                Corporate HQ & Sales
-              </h3>
+                <SplitText
+                  text="Corporate HQ & Sales"
+                  className="text-lg font-black text-slate-900 dark:text-white"
+                />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">General Inquiry</p>
@@ -136,13 +177,16 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* Projects & Service Support Lines */}
+          {/* Projects & Support Card */}
           <Reveal delay={0.4} className="h-full">
-            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3">
+            <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm flex flex-col">
+              <div className="mb-8 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                Projects & Support
-              </h3>
+                <SplitText
+                  text="Projects & Support"
+                  className="text-lg font-black text-slate-900 dark:text-white"
+                />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
@@ -164,8 +208,7 @@ export default function Contact() {
         </div>
 
         {/* E-SERVICE PORTAL SECTION 
-            Purpose: High-impact CTA for existing clients with maintenance contracts.
-            Visuals: Uses a background blur glow and glassmorphism cards for a "tech-forward" feel.
+            A high-contrast CTA section promoting the digital service portal.
         */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
@@ -173,23 +216,26 @@ export default function Contact() {
           viewport={{ once: true }}
           className="bg-slate-900 dark:bg-slate-900/40 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 text-white relative overflow-hidden border border-white/5 shadow-2xl"
         >
-          {/* Decorative Glow background effect */}
+          {/* Decorative blur effect */}
           <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-blue-600/10 dark:bg-blue-400/5 blur-[120px] pointer-events-none"></div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-            {/* Left Column: Portal Information */}
+            {/* Left Column: Context and Features */}
             <div className="text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase tracking-widest mb-8">
                 <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
                 Digital Maintenance
               </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">ISC e-Service Portal</h2>
+              <SplitText
+                text="ISC e-Service Portal"
+                className="text-3xl md:text-4xl font-black mb-6 leading-tight"
+                delay={50}
+              />
               <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-10">
                 Avail a <span className="text-white font-bold underline decoration-blue-500 underline-offset-8">Maintenance Contract</span> to 
                 enable real-time digital fault reporting and system monitoring.
               </p>
               
-              {/* Feature Highlights with backdrop blur cards */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-5 rounded-2xl flex-1 backdrop-blur-md">
                   <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg shadow-lg">1</div>
@@ -202,9 +248,12 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Right Column: Portal Login Box */}
+            {/* Right Column: Portal Login Dashboard */}
             <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-sm">
-                <h4 className="text-lg md:text-xl font-bold mb-6 text-center md:text-left">Access Your Dashboard</h4>
+                <SplitText
+                  text="Access Your Dashboard"
+                  className="text-lg md:text-xl font-bold mb-6 text-center md:text-left"
+                />
                 <a 
                   href="https://e-service.iscksa.com/portal/#/mcportal/login/" 
                   target="_blank" 

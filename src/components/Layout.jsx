@@ -145,24 +145,26 @@ export default function Layout({ children }) {
             isScrolled ? 'justify-start' : 'justify-center'
           }`}>
             <motion.div 
-              layout 
+              // CHANGE: Only apply layout animation if we are on the home page
+              // This prevents the "jump" when moving between routes
+              layout={pathname === '/'} 
               transition={{ type: "spring", stiffness: 50, damping: 20 }}
               className={`pointer-events-auto transform-gpu ${isScrolled ? 'translate-y-0' : '-translate-y-8'}`}
             >
               <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
                 <motion.img 
-                  layout
+                  layout={pathname === '/'} // CHANGE: Apply same logic here
                   src={logo} 
-                  className={`w-auto dark:brightness-125 ${isScrolled ? 'h-10 md:h-12' : 'h-24 md:h-28 lg:h-32'}`} 
+                  className={`w-auto dark:brightness-125 transition-[height] duration-[1000ms] ${isScrolled ? 'h-10 md:h-12' : 'h-24 md:h-28 lg:h-32'}`} 
                 />
                 <motion.div 
-                  layout
-                  className={`bg-blue-900 rounded-lg flex items-center shadow-lg ${isScrolled ? 'px-3 py-1.5' : 'px-5 py-2.5 md:px-8 md:py-5'}`}
+                  layout={pathname === '/'} // CHANGE: Apply same logic here
+                  className={`bg-blue-900 rounded-lg flex items-center shadow-lg transition-all duration-[1000ms] ${isScrolled ? 'px-3 py-1.5' : 'px-5 py-2.5 md:px-8 md:py-5'}`}
                 >
                   <motion.img 
-                    layout
+                    layout={pathname === '/'} // CHANGE: Apply same logic here
                     src={footerLogo} 
-                    className={`w-auto ${isScrolled ? 'h-5 md:h-6' : 'h-14 md:h-14 8 lg:h-20'}`} 
+                    className={`w-auto transition-[height] duration-[1000ms] ${isScrolled ? 'h-5 md:h-6' : 'h-14 md:h-14 8 lg:h-20'}`} 
                   />
                 </motion.div>
               </Link>

@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react"; // Added useState for image tracking
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // Added AnimatePresence
 import conceptImage from "../../assets/office.png";
 import officeFront from "../../assets/officefront.png";
-// Import the background component
 import LiquidEther from '../../component/LiquidEther'; 
 
 import { 
@@ -11,6 +10,26 @@ import {
   MagneticButton, 
   StatCounter 
 } from "../../components/UIComponents";
+
+// 1. New SmoothImage Component for "Jank-Free" loading
+const SmoothImage = ({ src, alt, className }) => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className={`relative overflow-hidden bg-slate-900/50 ${className}`}>
+      <motion.img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        initial={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+        animate={loaded ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
+        transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+        className="w-full h-full object-cover"
+      />
+      {/* Optional: Simple subtle shimmer or solid color while loading */}
+      {!loaded && <div className="absolute inset-0 bg-blue-900/10 animate-pulse" />}
+    </div>
+  );
+};
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -23,16 +42,34 @@ const HeroSection = () => {
     }
   };
 
+  // 2. Orchestration Variants for the whole section
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15, // Staggers the "Reveal" components automatically
+        delayChildren: 0.2
+      }
+    }
+  };
+
   return (
     <div className="overflow-x-hidden">
-      <section
+      <motion.section
         id="home"
-        /* Note: Changed bg-gradient to a slightly more transparent version or removed 
-           to let the LiquidEther colors shine through if desired */
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
         className="min-h-[100svh] pt-32 pb-20 md:pt-40 bg-slate-950 flex items-center text-white relative overflow-hidden transition-all duration-700"
       >
-        {/* --- LIQUID ETHER BACKGROUND IMPLEMENTATION --- */}
-        <div className="absolute inset-0 z-0 opacity-40">
+        {/* --- LIQUID ETHER BACKGROUND --- */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ duration: 2 }}
+          className="absolute inset-0 z-0"
+        >
           <LiquidEther
             colors={[ '#0F172A', '#2563EB', '#60A5FA' ]}
             mouseForce={15}
@@ -53,9 +90,9 @@ const HeroSection = () => {
             color1="#FF9FFC"
             color2="#B19EEF"
           />
-        </div>
+        </motion.div>
 
-        {/* Existing Decorative Elements - Kept for extra depth */}
+        {/* Existing Decorative Elements */}
         <motion.div 
           animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
@@ -93,24 +130,24 @@ const HeroSection = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto lg:mx-0">
                 <div className="flex flex-col gap-4">
                    <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "solutions")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest">
+                    <button onClick={(e) => scrollToSection(e, "solutions")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest active:scale-95">
                       Our Solutions
                     </button>
                   </MagneticButton>
                   <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "projects")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest">
+                    <button onClick={(e) => scrollToSection(e, "projects")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest active:scale-95">
                       Our Projects
                     </button>
                   </MagneticButton>
                 </div>
                 <div className="flex flex-col gap-4">
                   <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "request-quote-cta")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest">
+                    <button onClick={(e) => scrollToSection(e, "request-quote-cta")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest active:scale-95">
                       Request a Quote
                     </button>
                   </MagneticButton>
                   <MagneticButton>
-                    <button onClick={() => navigate("/contact")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest">
+                    <button onClick={() => navigate("/contact")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest active:scale-95">
                       Contact Us
                     </button>
                   </MagneticButton>
@@ -128,6 +165,7 @@ const HeroSection = () => {
 
           {/* RIGHT CONTENT: VISUAL COMPOSITION */}
           <div className="lg:col-span-5 relative h-[500px] md:h-[650px] mt-12 lg:mt-0">
+            {/* Main Office Image */}
             <Reveal delay={0.3} y={40}>
               <motion.div 
                 animate={{ y: [0, -15, 0] }}
@@ -135,16 +173,17 @@ const HeroSection = () => {
                 className="absolute top-0 right-0 w-[85%] aspect-[4/5] z-10"
               >
                 <div className="w-full h-full bg-slate-900 rounded-[2rem] md:rounded-[4rem] overflow-hidden border-4 border-white/10 shadow-2xl relative group">
-                  <img
-                    src={officeFront}
-                    alt="ISC Office Front"
-                    className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-1000"
+                  <SmoothImage 
+                    src={officeFront} 
+                    alt="ISC Office Front" 
+                    className="w-full h-full grayscale-[0.3] group-hover:grayscale-0 transition-all duration-1000"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent pointer-events-none" />
                 </div>
               </motion.div>
             </Reveal>
 
+            {/* Concept Image Overlay */}
             <Reveal delay={0.5} y={60}>
               <motion.div 
                 animate={{ y: [0, 15, 0] }}
@@ -152,10 +191,10 @@ const HeroSection = () => {
                 className="absolute bottom-4 left-0 w-[65%] aspect-square z-20"
               >
                 <div className="w-full h-full bg-blue-900 rounded-[1.5rem] md:rounded-[3rem] overflow-hidden border-8 border-blue-950 shadow-[-20px_20px_50px_rgba(0,0,0,0.5)] relative group">
-                  <img
-                    src={conceptImage}
-                    alt="ISC Concept Interior"
-                    className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000"
+                  <SmoothImage 
+                    src={conceptImage} 
+                    alt="ISC Concept Interior" 
+                    className="w-full h-full grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000"
                   />
                 </div>
               </motion.div>
@@ -166,7 +205,7 @@ const HeroSection = () => {
           </div>
           
         </div>
-      </section>
+      </motion.section>
 
       <style jsx>{`
         .animate-spin-slow {

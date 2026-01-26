@@ -20,7 +20,7 @@ const SmoothImage = ({ src, alt, className }) => {
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
-        initial={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+        initial={{ opacity: 0, filter: "blur(10px)" }}
         animate={loaded ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
         transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
         className="w-full h-full object-cover"
@@ -163,47 +163,62 @@ const HeroSection = () => {
             </Reveal>
           </div>
 
-          {/* RIGHT CONTENT: VISUAL COMPOSITION */}
-          <div className="lg:col-span-5 relative h-[500px] md:h-[650px] mt-12 lg:mt-0">
-            {/* Main Office Image */}
-            <Reveal delay={0.3} y={40}>
-              <motion.div 
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-0 right-0 w-[85%] aspect-[4/5] z-10"
-              >
-                <div className="w-full h-full bg-slate-900 rounded-[2rem] md:rounded-[4rem] overflow-hidden border-4 border-white/10 shadow-2xl relative group">
-                  <SmoothImage 
-                    src={officeFront} 
-                    alt="ISC Office Front" 
-                    className="w-full h-full grayscale-[0.3] group-hover:grayscale-0 transition-all duration-1000"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent pointer-events-none" />
-                </div>
-              </motion.div>
-            </Reveal>
+          {/* RIGHT CONTENT: FACADE + CONTEXT ANGLE (OPTION 1 – REFINED) */}
+<div className="lg:col-span-5 relative min-h-[600px] flex items-center justify-center -translate-y-12">
 
-            {/* Concept Image Overlay */}
-            <Reveal delay={0.5} y={60}>
-              <motion.div 
-                animate={{ y: [0, 15, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-4 left-0 w-[65%] aspect-square z-20"
-              >
-                <div className="w-full h-full bg-blue-900 rounded-[1.5rem] md:rounded-[3rem] overflow-hidden border-8 border-blue-950 shadow-[-20px_20px_50px_rgba(0,0,0,0.5)] relative group">
-                  <SmoothImage 
-                    src={conceptImage} 
-                    alt="ISC Concept Interior" 
-                    className="w-full h-full grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000"
-                  />
-                </div>
-              </motion.div>
-            </Reveal>
+  {/* Side View (Context Image) */}
+<Reveal delay={0.5}>
+  <motion.div
+    initial={{ opacity: 0, y: 60 }}
+    animate={{
+      opacity: 1,
+      y: [20, 0, 8, 0]
+    }}
+    transition={{
+      opacity: { duration: 1.2, ease: "easeOut" },
+      y: {
+        times: [0, 0.35, 0.75, 1],
+        duration: 14,
+        repeat: Infinity,
+        repeatDelay: 1.5,
+        ease: "easeInOut"
+      }
+    }}
+    className="absolute -top-6 -left-24 w-[75%] bg-slate-900 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-xl z-10"
+  >
+    <SmoothImage
+      src={conceptImage}
+      alt="ISC Office – Side View"
+      className="w-full h-auto object-cover"
+    />
+  </motion.div>
+</Reveal>
 
-            {/* Decorative Accents */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-blue-400/10 rounded-full -z-10 animate-spin-slow" />
-          </div>
-          
+
+  {/* Front View (Primary Image) */}
+  <Reveal delay={0.3}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: [0, -6, 0] }}
+      transition={{
+        opacity: { duration: 0.9, ease: "easeOut" },
+        y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
+      }}
+      className="relative w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-20"
+    >
+      <SmoothImage
+        src={officeFront}
+        alt="ISC Head Office – Front View"
+        className="w-full h-auto object-cover"
+      />
+    </motion.div>
+  </Reveal>
+
+  {/* Decorative Ring */}
+  <div className="absolute w-[140%] h-[140%] border border-blue-500/5 rounded-full -z-10 animate-spin-slow pointer-events-none" />
+</div>
+
+
         </div>
       </motion.section>
 

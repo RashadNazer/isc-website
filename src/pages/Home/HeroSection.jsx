@@ -164,61 +164,59 @@ const HeroSection = () => {
           </div>
 
           {/* RIGHT CONTENT: FACADE + CONTEXT ANGLE (OPTION 1 – REFINED) */}
-<div className="lg:col-span-5 relative min-h-[600px] flex items-center justify-center -translate-y-12">
+          <div className="lg:col-span-5 relative min-h-[600px] flex items-center justify-center -translate-y-12">
 
-  {/* Side View (Context Image) */}
-<Reveal delay={0.5}>
-  <motion.div
-    initial={{ opacity: 0, y: 60 }}
-    animate={{
-      opacity: 1,
-      y: [20, 0, 8, 0]
-    }}
-    transition={{
-      opacity: { duration: 1.2, ease: "easeOut" },
-      y: {
-        times: [0, 0.35, 0.75, 1],
-        duration: 14,
-        repeat: Infinity,
-        repeatDelay: 1.5,
-        ease: "easeInOut"
-      }
-    }}
-    className="absolute -top-6 -left-24 w-[75%] bg-slate-900 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-xl z-10"
-  >
-    <SmoothImage
-      src={conceptImage}
-      alt="ISC Office – Side View"
-      className="w-full h-auto object-cover"
-    />
-  </motion.div>
-</Reveal>
-
-
-  {/* Front View (Primary Image) */}
-  <Reveal delay={0.3}>
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: [0, -6, 0] }}
-      transition={{
-        opacity: { duration: 0.9, ease: "easeOut" },
-        y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
-      }}
-      className="relative w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-20"
-    >
-      <SmoothImage
-        src={officeFront}
-        alt="ISC Head Office – Front View"
-        className="w-full h-auto object-cover"
-      />
-    </motion.div>
-  </Reveal>
-
-  {/* Decorative Ring */}
-  <div className="absolute w-[140%] h-[140%] border border-blue-500/5 rounded-full -z-10 animate-spin-slow pointer-events-none" />
-</div>
+            {/* Side View (Context Image) */}
+          <Reveal delay={0.5}>
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{
+                opacity: 1,
+                y: [20, 0, 8, 0]
+              }}
+              transition={{
+                opacity: { duration: 1.2, ease: "easeOut" },
+                y: {
+                  times: [0, 0.35, 0.75, 1],
+                  duration: 14,
+                  repeat: Infinity,
+                  repeatDelay: 1.5,
+                  ease: "easeInOut"
+                }
+              }}
+              className="absolute -top-6 -left-24 w-[75%] bg-slate-900 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-xl z-10"
+            >
+              <SmoothImage
+                src={conceptImage}
+                alt="ISC Office – Side View"
+                className="w-full h-auto object-cover"
+              />
+            </motion.div>
+          </Reveal>
 
 
+            {/* Front View (Primary Image) */}
+            <Reveal delay={0.3}>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: [0, -6, 0] }}
+                transition={{
+                  opacity: { duration: 0.9, ease: "easeOut" },
+                  y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
+                }}
+                className="relative w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-20"
+              >
+                <SmoothImage
+                  src={officeFront}
+                  alt="ISC Head Office – Front View"
+                  className="w-full h-auto object-cover"
+                />
+              </motion.div>
+            </Reveal>
+
+            {/* Decorative Ring */}
+            <div className="absolute w-[140%] h-[140%] border border-blue-500/5 rounded-full -z-10 animate-spin-slow pointer-events-none" />
+          </div>
         </div>
       </motion.section>
 

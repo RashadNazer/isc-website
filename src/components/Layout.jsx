@@ -31,7 +31,7 @@ export default function Layout({ children }) {
     { name: 'Projects', path: 'projects' },
     { name: 'Products', path: 'products' },
     { name: 'Request Quote', path: 'request-quote-cta' },
-    { name: 'Career', path: '/career', type: 'route' },
+    { name: 'Careers', path: '/career', type: 'route' },
   ], []);
 
   // --- 3. THEME MANAGEMENT ---

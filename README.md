@@ -1,16 +1,58 @@
-# React + Vite
+# ISC Test Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium, high-performance website for **ISC**, the premier leader in Electronic Systems Integration. This platform showcases over 40 years of industrial excellence through a modern, immersive digital experience.
 
-Currently, two official plugins are available:
+## 🛠 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* **Frontend:** [React 18](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Animations:** [Framer Motion](https://www.framer.com/motion/) (Orchestrated Reveals & Parallax)
+* **Interactive Visuals:** [Liquid Ether](https://github.com/) (Custom GLSL/Canvas Interaction)
+* **Routing:** [React Router v6](https://reactrouter.com/)
+* **Deployment:** [Vercel](https://vercel.com/)
 
-## React Compiler
+## ✨ Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Asymmetric Architecture:** Custom Bento-style image grids that maintain natural resolutions and aspect ratios.
+* **Micro-Interactions:** Magnetic buttons and staggered "Reveal" components for a high-end feel.
+* **Optimized Performance:** SmoothImage components with blur-up loading and image priority handling.
+* **Robust Routing:** Configured for SPA stability to prevent 404 errors on direct URL entry or page refreshes.
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1. Installation
+```bash
+npm install
+```
+
+### 2. Development
+```bash
+npm run dev
+```
+
+### 3. Production Build
+```bash
+npm run build
+```
+
+## 🌐 Deployment Configuration
+
+To ensure seamless routing on Vercel, the project uses a vercel.json rewrite configuration in the root directory. This redirects all server requests to index.html, allowing React Router to handle the URL logic.
+
+```JSON
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+## 📁 Project Structure
+
+* **src/assets/** — High-resolution industrial photography and brand assets.
+* **src/components/** — Core UI library including MagneticButton, Reveal, and StatCounter.
+* **src/pages/** — Individual page views (Home, Career, Projects, Privacy, etc.).
+* **src/component/LiquidEther/** — Specialized interactive background engine.

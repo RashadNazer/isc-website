@@ -123,11 +123,11 @@ export default function Footer() {
             <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Headquarters</h4>
             <div className="space-y-3 text-sm text-slate-400">
               <p className="flex flex-col">
-                <span className="text-white font-medium">Al Khobar, Saudi Arabia</span>
-                Prince Turki St, Al Yarmouk Dist.
+                <span className="text-white font-medium">Bldg. 7739, Madinat Al Umal 34441</span>
+                PO Box 4034, Al Khobar 31952<br /> Kingdom of Saudi Arabia
               </p>
               <p className="pt-2 hover:text-white transition-colors cursor-default">Email: info@iscksa.com</p>
-              <p className="hover:text-white transition-colors cursor-default">Fax: +966-13-898-4602</p>
+              <p className="hover:text-white transition-colors cursor-default">Office: +966-13-8962000</p>
             </div>
           </div>
         </div>

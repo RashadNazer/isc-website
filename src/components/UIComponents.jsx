@@ -97,34 +97,47 @@ export const MagneticButton = ({ children, className = "" }) => {
 
 /**
  * 5. SMART DATA VISUALIZATION (Counter)
- * An auto-incrementing number that starts when the component is visible on screen.
- * Uses Framer Motion's 'animate' function to handle the interpolation logic.
+ * Optimized to remove the "tail-end lag" using onComplete.
  */
-export const StatCounter = ({ value, suffix = "", label }) => {
+export const StatCounter = ({ 
+  value, 
+  suffix = "", 
+  label, 
+  colorClass = "text-slate-900 dark:text-white", 
+  labelColorClass = "text-blue-600 dark:text-blue-400" 
+}) => {
   const [displayValue, setDisplayValue] = useState(0);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true }); // Hook to detect if element is in viewport
+  const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
     if (isInView) {
-      // Logic to animate numbers from 0 to 'value'
+      // Reduced duration slightly to 2.0 for a more energetic feel
       const controls = animate(0, value, {
-        duration: 2,
-        ease: "easeOut",
+        duration: 2.0, 
+        ease: "easeOut", // Cinematic expo ease
         onUpdate: (latest) => setDisplayValue(Math.floor(latest)),
+        // Safety fix: explicitly set the final value when the animation finishes
+        onComplete: () => setDisplayValue(value), 
       });
       return () => controls.stop();
     }
   }, [isInView, value]);
 
   return (
-    <div ref={ref} className="text-center">
-      {/* Large Numerical Value */}
-      <div className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-2">
-        {displayValue}{suffix}
-      </div>
-      {/* Subtext/Label */}
-      <p className="text-blue-600 dark:text-blue-400 font-bold uppercase tracking-[0.2em] text-[10px] md:text-xs">
+    <div ref={ref} className="text-left flex flex-col">
+      {/* Numerical Value */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className={`text-4xl md:text-6xl font-black leading-none mb-2 will-change-transform ${colorClass}`}
+      >
+        {displayValue.toLocaleString()}{suffix}
+      </motion.div>
+      
+      {/* Label */}
+      <p className={`font-black uppercase tracking-[0.3em] text-[9px] md:text-[10px] opacity-70 ${labelColorClass}`}>
         {label}
       </p>
     </div>

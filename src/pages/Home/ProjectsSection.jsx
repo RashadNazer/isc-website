@@ -32,7 +32,7 @@ const ProjectsSection = () => {
       <Balatro
         isRotate={false}
         mouseInteraction={true}
-        pixelFilter={745}
+        pixelFilter={1800}
         color1="#2563eb" 
         color2="#0f172a" 
         color3="#3b82f6" 

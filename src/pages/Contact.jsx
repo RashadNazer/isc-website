@@ -1,31 +1,31 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; // Added AnimatePresence
 import { 
   Reveal, 
   MagneticButton, 
-  StatCounter, 
 } from "../components/UIComponents";
 import Aurora from '../component/Aurora';
-import SplitText from "../component/SplitText";
 
-/**
- * Contact Component
- * This page provides users with various ways to reach ISC, including 
- * office locations, logistics details, and digital portal access.
- */
 export default function Contact() {
-  // Callback for when the SplitText or motion animations finish
-  const handleAnimationComplete = () => {
-    console.log('Heading animation complete!');
+  const [isSubmitted, setIsSubmitted] = useState(false); // Track submission state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate an API call delay
+    console.log("Form submitted to sa@iscksa.com", formData);
+    setIsSubmitted(true);
   };
 
   return (
     <div className="relative isolate bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500 overflow-x-hidden">
       
-      {/* --- GLOBAL AURORA BACKGROUND --- 
-          The Aurora component provides a subtle, animated gradient background.
-          Z-index is set to negative to keep it behind all content.
-      */}
+      {/* --- GLOBAL AURORA BACKGROUND --- */}
       <div className="absolute inset-0 z-[-1] pointer-events-none opacity-30 dark:opacity-20">
         <Aurora
           colorStops={["#2563eb", "#ffffff", "#1e3a8a"]} 
@@ -35,9 +35,7 @@ export default function Contact() {
         />
       </div>
 
-      {/* HERO / HEADER SECTION 
-          Introduces the page with a clear "Get In Touch" message using text-splitting animations.
-      */}
+      {/* HERO / HEADER SECTION */}
       <section className="bg-slate-50/50 dark:bg-slate-900/30 pt-24 md:pt-32 pb-16 md:pb-20 border-b border-slate-100 dark:border-slate-800 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 text-left lg:text-center">
           <motion.div
@@ -45,27 +43,12 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Animated Eyebrow Text */}
-            <div className="mb-4">
-              <SplitText
-                text="Get In Touch"
-                className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-[0.3em]"
-                delay={30}
-                animationStep={0.03}
-              />
-            </div>
-            
-            {/* Main Animated Title */}
-            <div className="mb-6">
-              <SplitText
-                text="Contact Us"
-                className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight"
-                delay={50}
-                duration={1.25}
-                textAlign="center"
-              />
-            </div>
-
+            <p className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-[0.3em] mb-4">
+              Get In Touch
+            </p>
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-6">
+              Contact Us
+            </h1>
             <p className="text-base md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
               Headquartered in <span className="text-blue-900 dark:text-blue-300 font-bold">Al-Khobar</span>, ISC operates across the Kingdom to provide 
               unrivaled electronic and communication system support.
@@ -74,17 +57,13 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* MAIN CONTACT GRID 
-          A collection of cards detailing physical addresses and service contacts.
-      */}
+      {/* MAIN CONTACT GRID */}
       <section className="py-12 md:py-20 max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
-          
-          {/* National Address Card - Uses Reveal for scroll-triggered entry */}
+          {/* National Address Card */}
           <Reveal delay={0.1} className="h-full">
             <div className="h-full bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-7 md:p-10 rounded-[2.5rem] border border-slate-200/50 dark:border-slate-800/50 shadow-sm hover:shadow-xl transition-all duration-300 group">
               <div className="flex flex-col sm:flex-row items-start gap-6">
-                {/* Icon wrapper with hover scaling */}
                 <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -92,11 +71,7 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <SplitText
-                    text="National Address"
-                    className="text-xl font-black text-slate-900 dark:text-white mb-4"
-                    delay={40}
-                  />
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">National Address</h3>
                   <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">
                     Building 7739, Twenty-Second Street<br />
                     Madinat Al Umal District 34441<br />
@@ -121,17 +96,13 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <SplitText
-                    text="Warehouse & Logistics"
-                    className="text-xl font-black text-slate-900 dark:text-white mb-4"
-                    delay={40}
-                  />
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4">Warehouse & Logistics</h3>
                   <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-medium">Prince Abdulmohsen Street, Al Khobar</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
                     <div>
                       <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
                       <div className="space-y-2">
-                        <a href="tel:+96613862000" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-862000</a>
+                        <a href="tel:+96613862000" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8962000</a>
                         <a href="tel:+966138650102" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8650102</a>
                       </div>
                     </div>
@@ -149,19 +120,13 @@ export default function Contact() {
           </Reveal>
         </div>
 
-        {/* ROW 2: SALES & SUPPORT 
-            Secondary contact information grid.
-        */}
+        {/* ROW 2: SALES & SUPPORT */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-20">
-          {/* Corporate HQ Card */}
           <Reveal delay={0.3} className="h-full">
             <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm flex flex-col">
               <div className="mb-8 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                <SplitText
-                  text="Corporate HQ & Sales"
-                  className="text-lg font-black text-slate-900 dark:text-white"
-                />
+                <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase">Corporate HQ & Sales</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
                 <div>
@@ -177,22 +142,18 @@ export default function Contact() {
             </div>
           </Reveal>
 
-          {/* Projects & Support Card */}
           <Reveal delay={0.4} className="h-full">
             <div className="h-full p-8 md:p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-sm flex flex-col">
               <div className="mb-8 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                <SplitText
-                  text="Projects & Support"
-                  className="text-lg font-black text-slate-900 dark:text-white"
-                />
+                <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase">Projects & Support</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Service Lines</p>
                   <div className="space-y-2">
                     <a href="tel:+966138990228" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8990228</a>
-                    <a href="tel:+966138943206" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-894-3206</a>
+                    <a href="tel:+966138943206" className="block text-lg font-black text-slate-900 dark:text-slate-100 hover:text-blue-600 transition-colors">+966-13-8943206</a>
                   </div>
                 </div>
                 <div>
@@ -207,73 +168,109 @@ export default function Contact() {
           </Reveal>
         </div>
 
-        {/* E-SERVICE PORTAL SECTION 
-            A high-contrast CTA section promoting the digital service portal.
-        */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="bg-slate-900 dark:bg-slate-900/40 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-16 text-white relative overflow-hidden border border-white/5 shadow-2xl"
-        >
-          {/* Decorative blur effect */}
-          <div className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-blue-600/10 dark:bg-blue-400/5 blur-[120px] pointer-events-none"></div>
+        {/* --- FORM & REDIRECT SECTION --- */}
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+  
+  {/* Left: Combined Support & Quote Redirects (Stretched to match right) */}
+  <div className="lg:col-span-4 flex flex-col gap-6">
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className="flex-1 bg-blue-600 dark:bg-blue-900/40 p-8 rounded-[2.5rem] text-white border border-blue-400/20 shadow-xl flex flex-col justify-between"
+    >
+      <div>
+        <h2 className="text-2xl font-black mb-4 uppercase tracking-tight">Request a Quote</h2>
+        <p className="text-blue-100 mb-6 opacity-90 leading-relaxed text-sm">
+          Looking for a specific solution or project estimate? Our sales team is ready to assist with detailed proposals.
+        </p>
+      </div>
+      <a href="/enquiry" className="inline-flex w-full items-center justify-center gap-3 bg-white text-blue-900 font-black py-4 px-8 rounded-2xl hover:bg-blue-50 transition-all active:scale-95 group">
+        Go to Quote Page
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      </a>
+    </motion.div>
+
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: 0.1 }}
+      className="flex-1 bg-slate-900 dark:bg-slate-900/60 p-8 rounded-[2.5rem] text-white border border-slate-700/50 flex flex-col justify-between"
+    >
+      <div>
+        <h2 className="text-xl font-black mb-4 uppercase tracking-tight">Technical Support</h2>
+        <p className="text-slate-400 mb-6 text-sm leading-relaxed">
+          Existing maintenance contract holders can access our support portal for fault reporting.
+        </p>
+      </div>
+      <a href="/support" className="inline-flex w-full items-center justify-center gap-3 border-2 border-slate-700 text-white font-bold py-3 px-8 rounded-2xl hover:bg-slate-800 transition-all">
+        Support Portal
+      </a>
+    </motion.div>
+  </div>
+
+  {/* Right: The Main Inquiry Form (The "Anchor" for height) */}
+  <motion.div 
+    initial={{ opacity: 0, x: 20 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true }}
+    className="lg:col-span-8 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-col justify-center min-h-[650px]"
+  >
+    <AnimatePresence mode="wait">
+      {!isSubmitted ? (
+        <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">General Inquiry</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-10 font-medium">For general questions, please use the form below.</p>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-            {/* Left Column: Context and Features */}
-            <div className="text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase tracking-widest mb-8">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                Digital Maintenance
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Your Name *</label>
+                <input required type="text" placeholder="John Doe" className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
-              <SplitText
-                text="ISC e-Service Portal"
-                className="text-3xl md:text-4xl font-black mb-6 leading-tight"
-                delay={50}
-              />
-              <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-10">
-                Avail a <span className="text-white font-bold underline decoration-blue-500 underline-offset-8">Maintenance Contract</span> to 
-                enable real-time digital fault reporting and system monitoring.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-5 rounded-2xl flex-1 backdrop-blur-md">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg shadow-lg">1</div>
-                  <span className="text-sm font-bold tracking-wide">Instant Reporting</span>
-                </div>
-                <div className="flex items-center gap-4 bg-white/5 border border-white/10 p-5 rounded-2xl flex-1 backdrop-blur-md">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg shadow-lg">2</div>
-                  <span className="text-sm font-bold tracking-wide">Live Monitoring</span>
-                </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Your Email *</label>
+                <input required type="email" placeholder="john@company.com" className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Subject</label>
+              <input type="text" placeholder="General Inquiry" className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Your Message</label>
+              <textarea rows={6} placeholder="How can we help you?" className="w-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-5 py-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"></textarea>
             </div>
 
-            {/* Right Column: Portal Login Dashboard */}
-            <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-sm">
-                <SplitText
-                  text="Access Your Dashboard"
-                  className="text-lg md:text-xl font-bold mb-6 text-center md:text-left"
-                />
-                <a 
-                  href="https://e-service.iscksa.com/portal/#/mcportal/login/" 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 group"
-                >
-                  Login to Portal
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </a>
-                <div className="mt-8 pt-8 border-t border-white/10 text-center">
-                    <p className="text-slate-400 text-xs mb-2 uppercase tracking-tighter">Support Enquiries:</p>
-                    <a href="mailto:mcsupport@iscksa.com" className="text-blue-400 font-bold hover:text-blue-300 break-all text-sm md:text-base">
-                        mcsupport@iscksa.com
-                    </a>
-                </div>
+            <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
+              <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-800 px-6 py-4 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 w-full sm:w-auto">
+                <input required type="checkbox" id="captcha" className="w-5 h-5 rounded cursor-pointer accent-blue-600" />
+                <label htmlFor="captcha" className="text-sm font-bold text-slate-600 dark:text-slate-300 cursor-pointer">I am not a robot</label>
+              </div>
+              <button type="submit" className="w-full sm:flex-1 bg-slate-900 dark:bg-blue-600 text-white font-black py-4 px-8 rounded-xl hover:bg-slate-800 dark:hover:bg-blue-500 transition-all shadow-lg active:scale-95">
+                Send Message
+              </button>
             </div>
-          </div>
+          </form>
         </motion.div>
+      ) : (
+        <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center text-center">
+          <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mb-6 shadow-xl shadow-green-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-10 h-10"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-2 uppercase">Message Delivered</h3>
+          <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-10">Thank you. Your message has been sent to our team at ISC.</p>
+          <button onClick={() => setIsSubmitted(false)} className="text-blue-600 font-bold hover:underline underline-offset-4">Send another message</button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </motion.div>
+</div>
       </section>
     </div>
   );

@@ -1,9 +1,6 @@
-import React, { useState } from "react"; // Added useState for image tracking
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; // Added AnimatePresence
-import conceptImage from "../../assets/office.png";
-import officeFront from "../../assets/officefront.png";
-import LiquidEther from '../../component/LiquidEther'; 
+import { motion } from "framer-motion";
 
 import { 
   Reveal, 
@@ -11,222 +8,158 @@ import {
   StatCounter 
 } from "../../components/UIComponents";
 
-// 1. New SmoothImage Component for "Jank-Free" loading
-const SmoothImage = ({ src, alt, className }) => {
-  const [loaded, setLoaded] = useState(false);
-  return (
-    <div className={`relative overflow-hidden bg-slate-900/50 ${className}`}>
-      <motion.img
-        src={src}
-        alt={alt}
-        onLoad={() => setLoaded(true)}
-        initial={{ opacity: 0, filter: "blur(10px)" }}
-        animate={loaded ? { opacity: 1, scale: 1, filter: "blur(0px)" } : {}}
-        transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
-        className="w-full h-full object-cover"
-      />
-      {/* Optional: Simple subtle shimmer or solid color while loading */}
-      {!loaded && <div className="absolute inset-0 bg-blue-900/10 animate-pulse" />}
-    </div>
-  );
-};
-
 const HeroSection = () => {
   const navigate = useNavigate();
+  
+  // --- VIDEO CONFIGURATION ---
+  const videos = [
+    "/videos/hero-1.mp4", 
+    "/videos/hero-2.mp4",
+    "/videos/hero-3.mp4",
+    "/videos/hero-4.mp4",
+    "/videos/hero-5.mp4",
+    "/videos/hero-7.mp4",
+    "/videos/hero-8.mp4"
+  ];
+  
+  const [currentVideo, setCurrentVideo] = useState(0);
+
+  // Switch video every 8 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentVideo((prev) => (prev + 1) % videos.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [videos.length]);
 
   const scrollToSection = (e, id) => {
     e.preventDefault();
     const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // 2. Orchestration Variants for the whole section
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15, // Staggers the "Reveal" components automatically
-        delayChildren: 0.2
-      }
-    }
+    if (section) section.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <div className="overflow-x-hidden">
-      <motion.section
+      <section
         id="home"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="min-h-[100svh] pt-32 pb-20 md:pt-40 bg-slate-950 flex items-center text-white relative overflow-hidden transition-all duration-700"
+        className="relative h-[100svh] w-full bg-black flex flex-col justify-end overflow-hidden"
       >
-        {/* --- LIQUID ETHER BACKGROUND --- */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 2 }}
-          className="absolute inset-0 z-0"
-        >
-          <LiquidEther
-            colors={[ '#0F172A', '#2563EB', '#60A5FA' ]}
-            mouseForce={15}
-            cursorSize={100}
-            isViscous={true}
-            viscous={30}
-            iterationsViscous={32}
-            iterationsPoisson={32}
-            resolution={0.5}
-            isBounce={false}
-            autoDemo
-            autoSpeed={0.3}
-            autoIntensity={2.2}
-            takeoverDuration={0.25}
-            autoResumeDelay={3000}
-            autoRampDuration={0.6}
-            color0="#5227FF"
-            color1="#FF9FFC"
-            color2="#B19EEF"
-          />
-        </motion.div>
-
-        {/* Existing Decorative Elements */}
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none z-0"
-        />
-
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
+        {/* --- PERFORMANCE OPTIMIZED VIDEO BACKGROUND --- */}
+        <div className="absolute inset-0 z-0 bg-black">
+          {videos.map((src, index) => (
+            <motion.video
+              key={src}
+              src={src}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: currentVideo === index ? 1 : 0,
+                scale: currentVideo === index ? 1 : 1.05 
+              }}
+              transition={{ 
+                duration: 2, 
+                ease: "easeInOut" 
+              }}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                // Forces Hardware Acceleration (GPU)
+                transform: 'translateZ(0)',
+                willChange: 'opacity, transform'
+              }}
+            />
+          ))}
           
-          {/* LEFT CONTENT */}
-          <div className="lg:col-span-7 space-y-10 text-center lg:text-left">
+          {/* Professional Overlay: Bottom-weighted dark gradient for text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-[1]" />
+        </div>
+
+        {/* --- CONTENT OVERLAY (CINEMATIC LOWER THIRD) --- */}
+        <div className="relative z-10 w-full pb-10 md:pb-16">
+          <div className="max-w-7xl mx-auto px-6">
+            
+            {/* Minimal Badge */}
             <Reveal>
-              <div className="inline-flex items-center gap-4 px-5 py-2.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full mb-6">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-blue-400 animate-pulse" />
-                <div className="text-[10px] md:text-xs font-black tracking-[0.4em] text-blue-100 uppercase">
-                   Industrial Excellence Since 1984
-                </div>
-              </div>
-
-              <h1 className="text-6xl md:text-8xl lg:text-[100px] font-black leading-[0.9] mb-8 tracking-tighter text-balance">
-                Concept to <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-400 to-blue-600">
-                  Completion
+              <div className="flex items-center gap-3 mb-6">
+                <span className="h-[1px] w-12 bg-blue-600" />
+                <span className="text-[10px] font-bold tracking-[0.6em] text-white/60 uppercase">
+                  Industrial Excellence Since 1984
                 </span>
-              </h1>
-
-              <p className="text-lg md:text-xl text-blue-50/80 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
-                The premier leader in Electronic Systems Integration. ISC provides a
-                sophisticated ecosystem of technologies designed for global operational efficiency,
-                blending innovation with decades of technical mastery to secure your industrial future.
-              </p>
-            </Reveal>
-
-            {/* CTA GRID */}
-            <Reveal delay={0.2}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto lg:mx-0">
-                <div className="flex flex-col gap-4">
-                   <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "solutions")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest active:scale-95">
-                      Our Solutions
-                    </button>
-                  </MagneticButton>
-                  <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "projects")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest active:scale-95">
-                      Our Projects
-                    </button>
-                  </MagneticButton>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <MagneticButton>
-                    <button onClick={(e) => scrollToSection(e, "request-quote-cta")} className="w-full py-5 bg-white text-blue-950 font-black rounded-xl shadow-xl hover:shadow-blue-500/20 transition-all text-[11px] uppercase tracking-widest active:scale-95">
-                      Request a Quote
-                    </button>
-                  </MagneticButton>
-                  <MagneticButton>
-                    <button onClick={() => navigate("/contact")} className="w-full py-5 bg-blue-600/20 backdrop-blur-md border border-white/20 text-white font-black rounded-xl hover:bg-blue-600/40 transition-all text-[11px] uppercase tracking-widest active:scale-95">
-                      Contact Us
-                    </button>
-                  </MagneticButton>
-                </div>
               </div>
             </Reveal>
 
-            <Reveal delay={0.4}>
-              <div className="pt-12 flex flex-wrap justify-center lg:justify-start gap-12 border-t border-white/10 mt-12">
-                <StatCounter value={40} suffix="+" label="Years Experience" />
-                <StatCounter value={2000} suffix="+" label="Completed Projects" />
-              </div>
-            </Reveal>
-          </div>
+            {/* Main Content Row */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10 mb-12">
+              <Reveal>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[0.8]">
+                  CONCEPT TO <br />
+                  <span className="text-slate-500">COMPLETION</span>
+                </h1>
+              </Reveal>
 
-          {/* RIGHT CONTENT: FACADE + CONTEXT ANGLE (OPTION 1 – REFINED) */}
-          <div className="lg:col-span-5 relative min-h-[600px] flex items-center justify-center -translate-y-12">
+              <Reveal delay={0.2}>
+                <p className="max-w-xl text-sm md:text-base text-white leading-relaxed font-light border-l border-white/10 pl-8">
+                  The premier leader in Electronic Systems Integration. ISC provides a 
+                  sophisticated ecosystem of technologies designed for global operational efficiency, 
+                  securing infrastructure with technical mastery.
+                </p>
+              </Reveal>
+            </div>
 
-            {/* Side View (Context Image) */}
-          <Reveal delay={0.5}>
-            <motion.div
-              initial={{ opacity: 0, y: 60 }}
-              animate={{
-                opacity: 1,
-                y: [20, 0, 8, 0]
-              }}
-              transition={{
-                opacity: { duration: 1.2, ease: "easeOut" },
-                y: {
-                  times: [0, 0.35, 0.75, 1],
-                  duration: 14,
-                  repeat: Infinity,
-                  repeatDelay: 1.5,
-                  ease: "easeInOut"
-                }
-              }}
-              className="absolute -top-6 -left-24 w-[75%] bg-slate-900 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-xl z-10"
-            >
-              <SmoothImage
-                src={conceptImage}
-                alt="ISC Office – Side View"
-                className="w-full h-auto object-cover"
-              />
-            </motion.div>
-          </Reveal>
+            {/* Actions and Stats Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-10 pt-10 border-t border-white/5">
+              
+              {/* Professional Button Group */}
+              <Reveal delay={0.3}>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button 
+                    onClick={(e) => scrollToSection(e, "solutions")} 
+                    className="px-10 py-4 bg-white text-black text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all duration-500"
+                  >
+                    Our Solutions
+                  </button>
+                  <button 
+                    onClick={(e) => scrollToSection(e, "projects")} 
+                    className="px-10 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white/10 transition-all duration-500"
+                  >
+                    Our Projects
+                  </button>
+                  <button 
+                    onClick={() => navigate("/contact")} 
+                    className="px-10 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white/10 transition-all duration-500"
+                  >
+                    Contact Us
+                  </button>
+                </div>
+              </Reveal>
 
+              {/* Stats Display - Updated to White */}
+              <Reveal delay={0.4}>
+                <div className="flex items-center gap-16 text-white">
+                  <div className="flex flex-col">
+                    <StatCounter value={40} suffix="+" label="YEARS" />
+                  </div>
+                  <div className="flex flex-col">
+                    <StatCounter value={2000} suffix="+" label="PROJECTS" />
+                  </div>
+                </div>
+              </Reveal>
+            </div>
 
-            {/* Front View (Primary Image) */}
-            <Reveal delay={0.3}>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: [0, -6, 0] }}
-                transition={{
-                  opacity: { duration: 0.9, ease: "easeOut" },
-                  y: { duration: 12, repeat: Infinity, ease: "easeInOut" }
-                }}
-                className="relative w-full bg-slate-900 rounded-[3.5rem] overflow-hidden border border-white/10 shadow-2xl z-20"
-              >
-                <SmoothImage
-                  src={officeFront}
-                  alt="ISC Head Office – Front View"
-                  className="w-full h-auto object-cover"
-                />
-              </motion.div>
-            </Reveal>
-
-            {/* Decorative Ring */}
-            <div className="absolute w-[140%] h-[140%] border border-blue-500/5 rounded-full -z-10 animate-spin-slow pointer-events-none" />
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      <style jsx>{`
-        .animate-spin-slow {
-          animation: spin 20s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to { transform: translate(-50%, -50%) rotate(360deg); }
+      {/* Global CSS to fix video rendering across browsers */}
+      <style jsx global>{`
+        video {
+          outline: none;
+          border: none;
+          -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
         }
       `}</style>
     </div>

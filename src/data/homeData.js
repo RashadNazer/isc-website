@@ -32,42 +32,42 @@ export const aboutValues = [
 export const solutionData = [
   {
     id: "sec",
-    title: "Security & Access Control",
-    subtitle: "Cohesive Framework & Protection",
+    title: "Security & Access Control Systems",
+    subtitle: "Enterprise Security Framework",
     image: sacsImg,
-    description: "We combine various security measures into a cohesive framework to enhance overall security posture of a facility. This ensures that only authorized individuals or vehicles can enter certain areas, protecting assets, sensitive information, and people.",
+    description: "We combine various security measures into a cohesive framework to enhance the overall security posture of a facility. This ensures that only authorized individuals or vehicles can enter certain areas, protecting assets, sensitive information, and people.",
     features: [
-      "To ensure no unauthorized or force entry",
-      "Round the clock surveillance with intelligence for proactive response",
-      "Detects and blocks unauthorized or dangerous objects",
-      "Enhanced security, efficiency, and scalability",
-      "Ensures only the right person has the key with 'Key Watcher'"
+      "Authorized & Forced Entry Prevention",
+      "24/7 Intelligent Surveillance for Proactive Response",
+      "Unauthorized/Dangerous Object Detection & Blocking",
+      "Scalable Access Methods for Enhanced Security",
+      "Key Watcher Systems for Precision Access Control"
     ]
   },
   {
     id: "fire",
-    title: "Life Safety & Fire Alarm",
+    title: "Life Safety & Fire Alarm Systems",
     subtitle: "Detection & Emergency Response",
     image: fireImg,
-    description: "Fire Alarm and detection system to protect buildings from fires, ensuring safety of occupants during emergencies, crucial for life safety.",
+    description: "Advanced Fire Alarm and detection systems engineered to protect infrastructure and ensure the safety of occupants during emergencies, providing a crucial backbone for life safety protocols.",
     features: [
-      "Conventional and Addressable System",
-      "All types of detectors and alarm Devices",
-      "Sounders and Strobes",
-      "Integration to other facility systems like BMS and Access Control"
+      "Conventional and Addressable Systems",
+      "Universal Detector & Alarm Device Support",
+      "High-Output Sounders and Strobes",
+      "Full Integration with BMS and Access Control"
     ]
   },
   {
     id: "it",
     title: "Information & Communication Technology",
-    subtitle: "IP-Based Connectivity & Innovation",
+    subtitle: "IP-Based Infrastructure",
     image: ictImg,
-    description: "We leverage IP-based products to enhance connectivity, efficiency, and innovation, driving significant improvements in system integration.",
+    description: "We leverage enterprise-grade IP-based products to enhance connectivity, efficiency, and innovation, driving significant improvements in system integration across the facility.",
     features: [
-      "Structured cabling and enterprise switches",
-      "IP Video Streaming and Telephony",
-      "Wireless Network for location scalability",
-      "Nurse Call, Intercoms, and Digital Signage"
+      "Structured Cabling & Enterprise Switching/Routing",
+      "IP Video Streaming and Unified Telephony",
+      "High-Scalability Wireless Network Infrastructure",
+      "Nurse Call, Intercoms, and Multimedia Systems"
     ]
   },
   {
@@ -75,12 +75,12 @@ export const solutionData = [
     title: "TETRA Systems",
     subtitle: "Mission-Critical Communications",
     image: tetraImg,
-    description: "TETRA provides secure and reliable communication in mission-critical operations for Oil & Gas, Government Agency, and Emergency Services.",
+    description: "TETRA provides secure and reliable communication in mission-critical operations for Oil & Gas, Government Agencies, and Emergency Services, ensuring resilience in public safety networks.",
     features: [
       "DMR/VMR Mobile Radios & Base Stations",
       "Servers, Recorders, and Dispatching Solutions",
-      "Antenna Systems & RF coverage",
-      "Drive Test and signal measurement surveys"
+      "Specialized Antenna & RF Coverage Systems",
+      "Drive Test and Signal Measurement Surveys"
     ]
   }
 ];

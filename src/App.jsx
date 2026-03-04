@@ -15,6 +15,10 @@ import CustomersPage from './pages/Customers';
 import Enquiry from "./pages/Enquiry";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import About from "./pages/About";
+import ServicesPage from "./pages/Services";
+import SolutionsPage from "./pages/Solutions";
+import Support from "./pages/Support";
 
 function App() {
   return (
@@ -32,6 +36,10 @@ function App() {
           <Route path="/enquiry" element={<Enquiry />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/solutions" element={<SolutionsPage />} />
+          <Route path="/support" element={<Support />} />
           {/* Fallback for undefined routes */}
           <Route path="*" element={<div className="py-40 text-center">404 - Page Not Found</div>} />
         </Routes>

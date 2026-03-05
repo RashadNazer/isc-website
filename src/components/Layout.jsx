@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, X } from 'lucide-react'; 
 import logo from '../assets/logo.png';
 import footerLogo from '../assets/footerlogo.png';
 import Footer from './Footer';
@@ -137,22 +137,26 @@ export default function Layout({ children }) {
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-x-3 xl:gap-x-5 flex-nowrap w-max">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                to={link.path} 
-                onClick={(e) => handleScrollLink(e, link.id || link.path)}
-                className="font-bold uppercase tracking-widest text-[10px] xl:text-[11px] text-slate-300 hover:text-blue-400 transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
+            <div className="hidden lg:flex items-center gap-x-3 xl:gap-x-5">
+                {navLinks.map((link) => (
+                <Link 
+                    key={link.name} 
+                    to={link.path} 
+                    onClick={(e) => handleScrollLink(e, link.id || link.path)}
+                    className="font-bold uppercase tracking-widest text-[10px] xl:text-[11px] text-slate-300 hover:text-blue-400 transition-colors"
+                >
+                    {link.name}
+                </Link>
+                ))}
+            </div>
             <Link to="/contact" className="hidden sm:block bg-blue-900 text-white px-3 py-1.5 rounded-md font-bold uppercase tracking-widest text-[9px] shadow-md ml-2 hover:bg-blue-800 transition-colors">
               Contact Us
             </Link>
-            <button onClick={toggleTheme} className="p-1.5 rounded-full bg-slate-800 text-amber-600 ml-2">
+            {/* HIDE ON MOBILE (OUTSIDE MENU) */}
+            <button onClick={toggleTheme} className="hidden lg:block p-1.5 rounded-full bg-slate-800 text-amber-600 ml-2">
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
             </button>
+            <button onClick={() => setIsMenuOpen(true)} className="lg:hidden p-2 text-blue-400"><MenuIcon /></button>
           </div>
         </div>
       </nav>
@@ -179,7 +183,8 @@ export default function Layout({ children }) {
               </Link>
             ))}
             <Link to="/contact" className="bg-blue-900 text-white px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-[10px] shadow-lg ml-2 hover:bg-blue-800 transition-colors">Contact Us</Link>
-            <button onClick={toggleTheme} className="p-1.5 rounded-full bg-slate-800 text-amber-600 ml-2">
+            {/* KEEP ON DESKTOP STICKY */}
+            <button onClick={toggleTheme} className="hidden lg:block p-1.5 rounded-full bg-slate-800 text-amber-600 ml-2">
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
             </button>
           </div>
@@ -192,6 +197,55 @@ export default function Layout({ children }) {
           style={{ scaleX }} 
         />
       </nav>
+
+      {/* MOBILE MENU OVERLAY */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110]"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 w-[80%] max-w-sm h-full bg-slate-900 border-l border-slate-800 z-[120] p-8 flex flex-col shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-12">
+                <img src={logo} className="h-8 w-auto" alt="Mobile Logo" />
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 text-slate-400 hover:text-white"><X className="w-8 h-8" /></button>
+              </div>
+
+              <div className="flex flex-col gap-y-6">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.name} 
+                    to={link.path} 
+                    onClick={(e) => handleScrollLink(e, link.id || link.path)}
+                    className="text-lg font-bold uppercase tracking-widest text-slate-300 hover:text-blue-400"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="bg-blue-900 text-white py-4 rounded-xl font-black text-center uppercase tracking-widest text-sm shadow-xl">Contact Us</Link>
+              </div>
+
+              {/* ONLY VISIBLE IN MENU ON MOBILE */}
+              <div className="mt-auto pt-8 border-t border-slate-800 flex items-center justify-between">
+                <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">Switch Theme</span>
+                <button onClick={toggleTheme} className="p-3 rounded-2xl bg-slate-800 text-amber-600">
+                  {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       <main className="flex-grow w-full relative bg-slate-900">{children}</main>
 

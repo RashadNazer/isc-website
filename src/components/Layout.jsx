@@ -125,18 +125,18 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-slate-900 font-sans flex flex-col transition-colors duration-700">
       
       {/* 1. LARGE HEADER (AL BAWANI STYLE) */}
-      <header className="relative z-[110] bg-slate-900 flex flex-col items-center">
+      <header className="relative z-110 bg-slate-900 flex flex-col items-center">
         <div className="w-full bg-blue-900 py-10 md:py-14 flex justify-center items-center px-4 border-b border-blue-800/50">
           <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex flex-col md:flex-row items-center gap-8">
             <img src={logo} className="w-auto h-24 md:h-28 lg:h-32 dark:brightness-125" alt="Logo" />
-            <div className="hidden md:block h-20 w-[1px] bg-white/20"></div>
+            <div className="hidden md:block h-20 w-px bg-white/20"></div>
             <img src={footerLogo} className="w-auto h-16 md:h-16 lg:h-20" alt="Footer Logo" />
           </Link>
         </div>
 
         <nav className="hidden lg:flex w-full bg-slate-900 border-b border-slate-800">
           <div className="max-w-7xl mx-auto w-full px-6 flex items-center justify-between h-20">
-            <div className="flex items-center justify-between flex-grow mr-10">
+            <div className="flex items-center justify-between grow mr-10">
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
@@ -167,7 +167,7 @@ export default function Layout({ children }) {
       </header>
 
       {/* 2. STICKY NAVBAR */}
-      <nav className={`fixed top-0 left-0 w-full h-20 bg-slate-900/95 backdrop-blur-md shadow-2xl border-b border-slate-800 z-[120] transition-transform duration-500 ${isStickyVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <nav className={`fixed top-0 left-0 w-full h-20 bg-slate-900/95 backdrop-blur-md shadow-2xl border-b border-slate-800 z-120 transition-transform duration-500 ${isStickyVisible ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center justify-between">
           <Link to="/" onClick={(e) => handleScrollLink(e, 'top')} className="flex items-center gap-2">
             <img src={logo} className="h-8 md:h-10 w-auto dark:brightness-125" alt="Logo Small" />
@@ -197,7 +197,7 @@ export default function Layout({ children }) {
           </div>
         </div>
         <motion.div 
-          className={`absolute bottom-0 left-0 right-0 h-[3px] origin-[0%] transition-colors duration-500 ${getProgressColor()}`} 
+          className={`absolute bottom-0 left-0 right-0 h-0.75 origin-[0%] transition-colors duration-500 ${getProgressColor()}`} 
           style={{ scaleX }} 
         />
       </nav>
@@ -209,12 +209,12 @@ export default function Layout({ children }) {
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150]"
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-150"
             />
             <motion.div 
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 w-[80%] max-w-sm h-full bg-slate-900 border-l border-slate-800 z-[160] p-8 flex flex-col shadow-2xl"
+              className="fixed top-0 right-0 w-[80%] max-w-sm h-full bg-slate-900 border-l border-slate-800 z-160 p-8 flex flex-col shadow-2xl"
             >
               <div className="flex items-center justify-between mb-12">
                 <img src={logo} className="h-8 w-auto" alt="Mobile Logo" />
@@ -246,11 +246,11 @@ export default function Layout({ children }) {
         )}
       </AnimatePresence>
 
-      <main className="flex-grow w-full relative bg-slate-900 transition-colors duration-700">{children}</main>
+      <main className="grow w-full relative bg-slate-900 transition-colors duration-700">{children}</main>
 
       {/* SIDE DOTS (PROGRESS INDICATOR) */}
       {pathname === '/' && (
-        <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-[90] hidden md:flex flex-col gap-6 items-end group">
+        <aside className="fixed right-8 top-1/2 -translate-y-1/2 z-90 hidden md:flex flex-col gap-6 items-end group">
           {navLinks.filter(l => l.id || l.type !== 'route').map((link) => {
             const targetId = link.id || link.path;
             return (
@@ -272,7 +272,7 @@ export default function Layout({ children }) {
           <motion.button
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-8 right-8 z-[100] p-4 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl text-blue-400 hover:text-white hover:bg-blue-600 transition-all active:scale-95"
+            className="fixed bottom-8 right-8 z-100 p-4 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl text-blue-400 hover:text-white hover:bg-blue-600 transition-all active:scale-95"
           >
             <ArrowUp className="w-6 h-6" />
           </motion.button>

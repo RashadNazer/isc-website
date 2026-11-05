@@ -1,30 +1,27 @@
 /* --- TAILWIND CONFIGURATION --- */
 @import "tailwindcss";
+@import "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
 
-/* Tailwind v4 Dark Mode Strategy 
-  Defines how 'dark:' classes are triggered. 
-  This looks for a '.dark' class on the html element or its ancestors.
-*/
+/* Tailwind v4 Dark Mode Strategy */
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
   html {
-    /* Enables smooth scrolling for anchor links (e.g., #about) */
     scroll-behavior: smooth;
+    /* Tells the browser to ALWAYS reserve space for the scrollbar. 
+       This prevents the layout from shifting when pages change height. */
+    scrollbar-gutter: stable;
   }
 
-  /* Standard Theme Transition 
-    Provides a smooth fade for browsers that do not support the View Transitions API.
-  */
-  html, body {
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
-  }
+  body {
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 }
 
 /* --- VIEW TRANSITIONS (Circular Reveal Logic) --- */
-/* The View Transitions API captures a "screenshot" of the old state and the new state.
-  We disable the default cross-fade animations to implement our custom circular clip-path in JS.
-*/
 ::view-transition-group(root),
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -32,21 +29,12 @@
   mix-blend-mode: normal !important;
 }
 
-/* Layering Logic:
-  Ensures the 'new' theme renders on top of the 'old' theme during the transition 
-  so the expansion (clip-path) is visible.
-*/
 .dark::view-transition-old(root) { z-index: 1; }
 .dark::view-transition-new(root) { z-index: 999; }
-
 ::view-transition-old(root) { z-index: 999; }
 ::view-transition-new(root) { z-index: 1; }
 
 /* --- ICON ANIMATIONS --- */
-
-/* Sun Icon: 
-  Rotates the icon into view when switching to Light Mode. 
-*/
 .sun-icon {
   animation: sun-spin 0.5s ease-out;
 }
@@ -56,38 +44,48 @@
   to { transform: rotate(0deg); }
 }
 
-/* Moon Icon: 
-  Slides and rotates the icon upward when switching to Dark Mode.
-*/
 .animate-moon {
   animation: moon-slide 0.4s ease-out forwards;
 }
 
 @keyframes moon-slide {
-  from { 
-    transform: translateY(5px) rotate(10deg); 
-    opacity: 0; 
+  from {
+    transform: translateY(5px) rotate(10deg);
+    opacity: 0;
   }
-  to { 
-    transform: translateY(0) rotate(0); 
-    opacity: 1; 
+  to {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
   }
 }
 
 /* --- CUSTOM UTILITIES --- */
 @layer utilities {
-  /* Utility to ensure animations stay at their final state after finishing */
   .fill-mode-both {
     animation-fill-mode: both;
   }
-  
-  /* Tab Reveal Animation:
-    Used for Mission/Vision/Values sections to create a subtle "pop-in" effect 
-    using a hardware-accelerated cubic-bezier curve.
-  */
+
   .animate-tab-content {
     animation: tab-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    backface-visibility: hidden; /* Fixes sub-pixel jittering in some browsers */
+    backface-visibility: hidden;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  /* FIX: Hide scrollbars completely but keep scroll functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
 }
 
@@ -100,4 +98,195 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* --- CUSTOM CURSOR --- */
+@media (hover: hover) and (pointer: fine) {
+  html, body, * {
+    cursor: none !important;
+  }
+}
+
+/* --- GLOBAL GRAIN OVERLAY (softened) --- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Nearly invisible in dark mode so text stays crisp */
+.dark body::before {
+  opacity: 0.008;
+}
+
+/* FIX: hide grain during theme swap to prevent jitter */
+html.theme-transitioning body::before {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+/* Smooth theme fade */
+html.theme-fading-out,
+html.theme-fading-out body {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+html.theme-fading-in,
+html.theme-fading-in body {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+/* --- CUSTOM SCROLLBAR --- */
+/* Removed the deprecated overflow-y: overlay rule */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #1e40af);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2563eb, #1e3a8a);
+  background-clip: padding-box;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 transparent;
+}
+
+/* --- TEXT SELECTION --- */
+::selection {
+  background: #3b82f6;
+  color: #ffffff;
+}
+::-moz-selection {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+/* --- FOCUS --- */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --- REDUCED MOTION --- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  body::before { display: none; }
+
+  html, body, * {
+    cursor: auto !important;
+  }
+}
+
+/* =====================================================
+   PRINT STYLES
+   ===================================================== */
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  header,
+  footer,
+  nav,
+  aside,
+  button,
+  [role="dialog"],
+  .no-print,
+  [class*="Aurora"],
+  [class*="Cursor"],
+  [class*="ScrollProgress"] {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body,
+  main,
+  section {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  h1 { font-size: 22pt; }
+  h2 { font-size: 16pt; }
+  h3 { font-size: 13pt; }
+
+  article,
+  .card,
+  li,
+  p,
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555 !important;
+  }
+
+  .card,
+  article,
+  [class*="rounded-[2rem]"] {
+    border: 1px solid #cccccc !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}
+
+/* Hide the global scroll progress bar when a top-nav mega-menu is open */
+html.mega-menu-open .scroll-progress-bar {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-out;
 }

@@ -41,7 +41,7 @@ import zamilLogo from '../assets/partner-logos/zamil.png';
 
 // 2. EXPORT DATA ARRAY
 export const customerData = [
-  { id: 1, name: "Saudi Aramco", logo: aramcoLogo, category: "Petrochemical", url: "https://www.aramco.com/en" },
+  { id: 1, name: "Saudi Aramco", logo: aramcoLogo, category: "Petrochemical", url: "https://www.aramco.com/en", featured: true },
   { id: 2, name: "SATORP", logo: satorpLogo, category: "Petrochemical", url: "https://www.satorp.com/" },
   { id: 3, name: "Petro Rabigh", logo: petrorabighLogo, category: "Petrochemical", url: "https://www.petrorabigh.com/en" },
   { id: 4, name: "SABIC", logo: sabicLogo, category: "Petrochemical", url: "https://www.sabic.com/en" },
@@ -55,7 +55,7 @@ export const customerData = [
   { id: 12, name: "Sadara", logo: sadaraLogo, category: "Petrochemical", url: "https://www.sadara.com/" },
   { id: 13, name: "Maaden", logo: maadenLogo, category: "Petrochemical", url: "https://www.maaden.com/" },
   { id: 14, name: "Saudi Electricity Company", logo: secLogo, category: "Petrochemical", url: "https://www.se.com.sa/en" },
-  { id: 15, name: "Johns Hopkins Aramco", logo: jhahLogo, category: "Hospital", url: "https://www.jhah.com/en/" },
+  { id: 15, name: "Johns Hopkins Aramco", logo: jhahLogo, category: "Hospital", url: "https://www.jhah.com/en/", featured: true },
   { id: 16, name: "Almana Hospitals", logo: almanaLogo, category: "Hospital", url: "https://www.almanahospital.com.sa/" },
   { id: 17, name: "Procare Hospital", logo: procareLogo, category: "Hospital", url: "https://procare.com.sa/en/" },
   { id: 18, name: "Abrar Communications Co", logo: abrarLogo, category: "General", url: "https://abrars.co/" },
@@ -69,12 +69,12 @@ export const customerData = [
   { id: 26, name: "Enppi", logo: enppiLogo, category: "General", url: "https://www.enppi.com/" },
   { id: 27, name: "General Dynamic Mission Systems", logo: gdmsLogo, category: "General", url: "https://gdmissionsystems.com/" },
   { id: 28, name: "Gas Vector Saudi Arabia", logo: gasvectorLogo, category: "General", url: "https://gasvector.com.sa/" },
-  { id: 29, name: "Hyundai Engineering & Construction", logo: hyundaiLogo, category: "General", url: "https://en.hdec.kr/en/main.aspx" },
+  { id: 29, name: "Hyundai Engineering & Construction", logo: hyundaiLogo, category: "General", url: "https://en.hdec.kr/en/main.aspx", featured: true },
   { id: 30, name: "Isam Khairi Kabbani Group", logo: ikkLogo, category: "General", url: "https://ikkgroup.com/main/" },
-  { id: 31, name: "Kalpataru Projects International Limited", logo: kalpataruLogo, category: "General", url: "https://kalpataruprojects.com/" },
+  { id: 31, name: "Kalpataru Projects International Limited", logo: kalpataruLogo, category: "General", url: "https://kalpataruprojects.com/", featured: true },
   { id: 32, name: "Metro Co. Ltd.", logo: metroLogo, category: "General", url: "https://metro-sa.com/" },
   { id: 33, name: "LS telcom", logo: lstmeLogo, category: "General", url: "https://www.lstelcom.com/en/home/" },
-  { id: 34, name: "Naizak Global Engineering Systems", logo: naizakLogo, category: "General", url: "https://naizak.com/" },
+  { id: 34, name: "Naizak Global Engineering Systems", logo: naizakLogo, category: "General", url: "https://naizak.com/", featured: true },
   { id: 35, name: "NESIC Saudi Arabia", logo: nesicLogo, category: "General", url: "https://nesicsa.com/" },
   { id: 36, name: "Projects Destinations Construction Co.", logo: wejhatLogo, category: "General", url: "https://wejhat.sa/" },
   { id: 37, name: "SICIM", logo: sicimLogo, category: "General", url: "https://www.sicim.eu/en/" },

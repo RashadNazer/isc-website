@@ -31,6 +31,7 @@ export const partnerData = [
         name: "HIRSCH",
         category: "Security",
         desc: " Specialized physical security and access control, video intelligence, and secure identification solutions across various industries",
+        specialties: ["Access Control", "Video Intelligence", "Identity Management", "Perimeter Protection"],
         url: "https://www.hirschsecure.com/",
         logo: hirschLogo
     },
@@ -38,6 +39,7 @@ export const partnerData = [
         name:"Hanwha",
         category: "Security",
         desc:"Innovative video surveillance systems and solutions leveraging advanced technologies such as artificial intelligence (AI), cloud connectivity, and cybersecurity ",
+        specialties: ["AI Cameras", "Video Management", "Cloud Surveillance", "Thermal Imaging"],
         logo: hanwhaLogo,
         url:"https://www.hanwhavision.com/ar/"
     },
@@ -45,6 +47,7 @@ export const partnerData = [
         name:"BOON EDAM",
         category: "Security",
         desc:"Turnstiles, revolving security and access doors, and portals",
+        specialties: ["Security Turnstiles", "Revolving Doors", "Optical Turnstiles", "Mantrap Portals"],
         logo: boonedamLogo,
         url:"https://www.boonedam.com/"
     },
@@ -52,6 +55,7 @@ export const partnerData = [
         name:"Lenel",
         category: "Security",
         desc:"Innovative products for comprehensive physical security solutions including access control, video surveillance and mobile credentialing ",
+        specialties: ["Access Control", "Video Surveillance", "Mobile Credentials", "Open Platform"],
         logo: lenelLogo,
         url:"https://buildings.honeywell.com/us/en/brands/our-brands/lenels2"
     },
@@ -59,6 +63,7 @@ export const partnerData = [
         name:"CAME",
         category: "Security",
         desc:"Turnstiles, automatic doors, and access barriers",
+        specialties: ["Speed Gates", "Automatic Doors", "Access Barriers", "Road Blockers"],
         logo: ozakLogo,
         url:"https://www.came.com/uk/public"
     },
@@ -66,6 +71,7 @@ export const partnerData = [
         name:"PERco",
         category: "Security",
         desc:"Turnstiles, railing systems and swing gates for security and entrance access control",
+        specialties: ["Turnstiles", "Swing Gates", "Railing Systems", "Access Control"],
         logo: percoLogo,
         url:"https://www.perco.com/"
     },
@@ -73,6 +79,7 @@ export const partnerData = [
         name:"Vicon",
         category: "Security",
         desc:"Leader in advanced security and surveillance technology with comprehensive security solutions designed to safeguard various business verticals",
+        specialties: ["Video Surveillance", "Access Control", "AI Cameras", "VMS"],
         logo: viconLogo,
         url:"https://vicon-security.com/"
     },
@@ -80,6 +87,7 @@ export const partnerData = [
         name:"Milestone",
         category: "Security",
         desc:"Video management solutions, providing actionable insights from video data through the perfect combination off cameras and sensors with open platform software and analytics ",
+        specialties: ["Video Management Software", "Video Analytics", "Cloud VMS", "Open Platform"],
         logo: milestoneLogo,
         url:"https://www.milestonesys.com/"
     },
@@ -87,13 +95,16 @@ export const partnerData = [
         name:"Edwards",
         category: "Fire",
         desc:"Fire and life safety solutions for all types of facilities",
+        specialties: ["Fire Alarm Systems", "Mass Notification", "Life Safety Panels", "Detection Systems"],
         logo: edwardsLogo,
-        url:"https://www.edwardsfiresafety.com/index.html"
+        url:"https://www.edwardsfiresafety.com/index.html",
+        featured: true
     },
     { id: 10,
         name:"AtlasIED",
         category: "ICT",
         desc:"Innovative audio communications solutions",
+        specialties: ["Mass Notification", "Distributed Audio", "Sound Masking", "Intercom Systems"],
         logo: atlasLogo,
         url:"https://www.atlasied.com/"
     },
@@ -101,6 +112,7 @@ export const partnerData = [
         name:"Belden",
         category: "ICT",
         desc:"End-to-End networking and connectivity infrastructure solutions",
+        specialties: ["Network Infrastructure", "Structured Cabling", "Industrial Networking", "Connectivity Solutions"],
         logo: beldenLogo,
         url:"https://www.belden.com/"
     },
@@ -108,6 +120,7 @@ export const partnerData = [
         name:"BiAmp",
         category: "ICT",
         desc:"Innovative audiovisual and communications solutions, whether across the rooms or around the globe",
+        specialties: ["Audiovisual Systems", "Conference Solutions", "Digital Signal Processing", "Sound Reinforcement"],
         logo: biampLogo,
         url:"https://www.biamp.com/"
     },
@@ -115,6 +128,7 @@ export const partnerData = [
         name:"Cisco",
         category: "ICT",
         desc:"nformation Technology solutions from backbone switches, routers and endpoint devices, software and security across wide range of business verticals",
+        specialties: ["Enterprise Networking", "Cybersecurity", "Data Center", "Collaboration"],
         logo: ciscoLogo,
         url:"https://www.cisco.com/"
     },
@@ -122,6 +136,7 @@ export const partnerData = [
         name:"CommScope",
         category: "ICT",
         desc:"Wide range of solutions to enhance connectivity and network performance across various industries",
+        specialties: ["Structured Cabling", "Fiber Optics", "Network Infrastructure", "Wireless Solutions"],
         logo: commscopeLogo,
         url:"https://www.commscope.com/"
     },
@@ -129,6 +144,7 @@ export const partnerData = [
         name:"HPE Aruba",
         category: "ICT",
         desc:"Enterprise wired and wireless network infrastructure solutions, from edge to campus, to data center to the cloud ",
+        specialties: ["Wireless Networking", "Wired Switching", "Network Security", "Edge-to-Cloud"],
         logo: hpeArubaLogo,
         url:"https://www.arubanetworks.com/"
     },
@@ -136,6 +152,7 @@ export const partnerData = [
         name:"Huawei",
         category: "ICT",
         desc:"Enterprise switches, routers, firewalls, and various networking equipment and storages for all types of businesses ",
+        specialties: ["Enterprise Networking", "Data Storage", "Firewalls", "Routers & Switches"],
         logo: huaweiLogo,
         url:"https://e.huawei.com/en/products-and-solutions"
     },
@@ -143,6 +160,7 @@ export const partnerData = [
         name:"Rauland",
         category: "ICT",
         desc:"A leading global provider of mission critical communication solutions for hospitals, healthcare systems, and educational facilities",
+        specialties: ["Nurse Call Systems", "Healthcare Communications", "Critical Alerts", "Clinical Workflow"],
         logo: raulandLogo,
         url:"https://www.rauland.com/"
     },
@@ -150,6 +168,7 @@ export const partnerData = [
         name:"Sapling",
         category: "ICT",
         desc:"Synchronized clocks for schools, hospitals, transportation, and various facilities",
+        specialties: ["Synchronized Clocks", "Time Systems", "Facility Timing", "Clock Systems"],
         logo: saplingLogo,
         url:"https://sapling-inc.com/"
     },
@@ -157,13 +176,16 @@ export const partnerData = [
         name:"Airbus",
         category: "TETRA",
         desc:"Solutions for secure communications, hybrid broadband + narrowband solutions, professional, hybrid TETRA+LTE devices, digital radio networks solutions",
+        specialties: ["TETRA Networks", "Hybrid TETRA+LTE", "Radio Devices", "Control Rooms"],
         logo: airbusLogo,
-        url:"https://www.securelandcommunications.com/"
+        url:"https://www.securelandcommunications.com/",
+        featured: true
     },
     { id: 20,
         name:"Amphenol Procom",
         category: "TETRA",
         desc:"World-leading antenna, DAS, and combiner and filter solutions",
+        specialties: ["Antenna Systems", "DAS Solutions", "Combiners & Filters", "RF Components"],
         logo: amphenolProcomLogo,
         url:"https://amphenolprocom.com/"
     },
@@ -171,6 +193,7 @@ export const partnerData = [
         name:"Andrew",
         category: "TETRA",
         desc:"Cables, passive RF systems, antennas, and various enterprise network infrastructure solutions",
+        specialties: ["RF Cables", "Antenna Systems", "Passive RF", "Network Infrastructure"],
         logo: andrewLogo,
         url:"https://www.commscope.com/"
     },
@@ -178,6 +201,7 @@ export const partnerData = [
         name:"Maven Wireless",
         category: "TETRA",
         desc:"Leading innovator in wireless, end-to-end digital solutions with ensuring wireless coverage for cellular and public safety",
+        specialties: ["DAS Solutions", "Public Safety Coverage", "Cellular Coverage", "Digital Wireless"],
         logo: mavenWirelessLogo,
         url:"https://mavenwireless.com/"
     },
@@ -185,6 +209,7 @@ export const partnerData = [
         name:"Motorola",
         category: "TETRA",
         desc:"TETRA solutions offer secure, reliable and efficient communications customized to meet the needs of different markets",
+        specialties: ["TETRA Radios", "Mission-Critical Comms", "Dispatch Systems", "Secure Communications"],
         logo: motorolaLogo,
         url:"https://www.motorolasolutions.com/en_xp/products/tetra.html"
     },
@@ -192,6 +217,7 @@ export const partnerData = [
         name:"Nokia",
         category: "TETRA",
         desc:"Comprehensive range of network solutions from radio access technologies such as 4G and 5G, microwave and optical for higher capacity data transport. ",
+        specialties: ["4G/5G Networks", "Microwave Transport", "Optical Networks", "Radio Access"],
         logo: nokiaLogo,
         url:"https://www.nokia.com/networks/"
     },
@@ -199,6 +225,7 @@ export const partnerData = [
         name:"PBE Axell",
         category: "TETRA",
         desc:"Provider of safety, confined space communications and temporary power solutions to a wide range of global sectors ",
+        specialties: ["Confined Space Comms", "Temporary Power", "Safety Systems", "Industrial Communications"],
         logo: pbeAxellLogo,
         url:"https://pbeaxell.com/"
     },
@@ -206,9 +233,8 @@ export const partnerData = [
         name:"RFS",
         category: "TETRA",
         desc:"Indoor Connectivity Solutions for Buildings and Tunnels",
+        specialties: ["Indoor DAS", "Tunnel Coverage", "RF Systems", "In-Building Solutions"],
         logo: rfsLogo,
         url:"https://www.rfsworld.com/"
     },
-
-        
-]
+];

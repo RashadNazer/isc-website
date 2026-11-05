@@ -34,6 +34,7 @@ export const solutionData = [
     id: "sec",
     title: "Security & Access Control Systems",
     subtitle: "Enterprise Security Framework",
+    shorttitle: "Security Systems",
     image: sacsImg,
     description: "We combine various security measures into a cohesive framework to enhance the overall security posture of a facility. This ensures that only authorized individuals or vehicles can enter certain areas, protecting assets, sensitive information, and people.",
     features: [
@@ -48,6 +49,7 @@ export const solutionData = [
     id: "fire",
     title: "Life Safety & Fire Alarm Systems",
     subtitle: "Detection & Emergency Response",
+    shorttitle: "Fire Alarm Systems",
     image: fireImg,
     description: "Advanced Fire Alarm and detection systems engineered to protect infrastructure and ensure the safety of occupants during emergencies, providing a crucial backbone for life safety protocols.",
     features: [
@@ -61,6 +63,7 @@ export const solutionData = [
     id: "it",
     title: "Information & Communication Technology",
     subtitle: "IP-Based Infrastructure",
+    shorttitle: "ICT",
     image: ictImg,
     description: "We leverage enterprise-grade IP-based products to enhance connectivity, efficiency, and innovation, driving significant improvements in system integration across the facility.",
     features: [
@@ -74,6 +77,7 @@ export const solutionData = [
     id: "tetra",
     title: "TETRA Systems",
     subtitle: "Mission-Critical Communications",
+    shorttitle: "TETRA",
     image: tetraImg,
     description: "TETRA provides secure and reliable communication in mission-critical operations for Oil & Gas, Government Agencies, and Emergency Services, ensuring resilience in public safety networks.",
     features: [

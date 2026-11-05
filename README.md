@@ -11,6 +11,7 @@ A premium, high-performance website for **ISC**, the premier leader in Electroni
 * **Routing:** [React Router v6](https://reactrouter.com/)
 * **Deployment:** [Vercel](https://vercel.com/)
 
+
 ## ✨ Key Features
 
 * **Asymmetric Architecture:** Custom Bento-style image grids that maintain natural resolutions and aspect ratios.
